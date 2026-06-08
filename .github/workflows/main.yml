@@ -4,7 +4,7 @@ on:
   # Trigger on both main and dev branches
   push:
     branches: 
-      - master
+      - main
       - Development
 
   # Manual trigger with environment selection
