@@ -1,0 +1,58 @@
+ export const jobs = [
+    {
+        id: 1,
+        title: "Desktop Support Engineer",
+        badge: "Fresher",
+        badgeColor: "orange",
+        postedAgo: "Posted 5 months ago",
+        experience: "1 Yr",
+        location: "Greater Noida",
+        department: "Engineer",
+        category: "IT, Sales",
+        skills:
+            "Proven work experience as a Desktop Support Engineer. Technical Support Engineer or similar role. Hands-on experience with...",
+        ctaLabel: "Apply",
+    },
+    {
+        id: 2,
+        title: "HR Executive",
+        badge: "Fresher",
+        badgeColor: "orange",
+        postedAgo: "Posted 5 months ago",
+        experience: "1 Yr",
+        location: "Greater Noida",
+        department: "HR Department",
+        category: "IT",
+        skills:
+            "One is required to have at least a Bachelor's degree in Human Resources or...",
+        ctaLabel: "View & Apply",
+    },
+    {
+        id: 3,
+        title: "Accounts Executive",
+        badge: "Fresher",
+        badgeColor: "orange",
+        postedAgo: "Posted 5 months ago",
+        experience: "1 Yr",
+        location: "Greater Noida",
+        department: "Administration",
+        category: "IT",
+        skills:
+            "Proven experience as an Account Executive, or similar sales/customer service role. Knowledge of market research...",
+        ctaLabel: "View & Apply",
+    },
+    {
+        id: 4,
+        title: "Sales Executive",
+        badge: "2 Yr Exp",
+        badgeColor: "blue",
+        postedAgo: "Posted 1 year ago",
+        experience: "2 Yr",
+        location: "Greater Noida",
+        department: "Sales",
+        category: "Sales",
+        skills:
+            "Master's degree in Business Administration, Marketing, or a related field. Experience in sales, preferably in...",
+        ctaLabel: "View & Apply",
+    },
+];

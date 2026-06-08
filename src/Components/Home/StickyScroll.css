@@ -1,0 +1,959 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+:root {
+  --dxc-black: #0a0a0a;
+  --dxc-white: #ffffff;
+  --dxc-orange: #e8600a;
+  --dxc-orange-light: #f0843a;
+  --dxc-gray-text: #3a3a3a;
+  --dxc-card-bg: #eeeceb;
+}
+
+/* ── Wrapper ── */
+.sticky-scroll-wrapper {
+  position: relative;
+  background: var(--dxc-white);
+}
+
+.sticky-scroll-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ── LEFT COLUMN ── */
+.sticky-scroll__left {
+  padding: 0 80px 0 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sticky-scroll__text-block {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.sticky-scroll__text-block h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--dxc-black);
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.sticky-scroll__text-block h2 .accent {
+  color: var(--dxc-orange);
+  display: block;
+}
+
+.sticky-scroll__text-block p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--dxc-gray-text);
+  max-width: 480px;
+  margin-bottom: 36px;
+  font-weight: 400;
+}
+
+/* ── Button ── */
+.sticky-scroll__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px solid var(--dxc-black);
+  padding: 12px 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dxc-black);
+  text-decoration: none;
+  width: fit-content;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+.sticky-scroll__btn:hover {
+  background: var(--dxc-black);
+  color: var(--dxc-white);
+}
+
+.sticky-scroll__btn svg {
+  transition: transform 0.22s ease;
+  flex-shrink: 0;
+}
+
+.sticky-scroll__btn:hover svg {
+  transform: translateX(4px);
+}
+
+/* ── RIGHT COLUMN (sticky) ── */
+/* ── RIGHT COLUMN (sticky) ── */
+.sticky-scroll__right {
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 80px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-right: 60px;
+}
+
+/* ── Cards Stack ── */
+.sticky-scroll__stack {
+  position: relative;
+
+  width: 520px;
+  height: 700px;
+}
+
+
+/* ── Individual Card ── */
+
+
+/* State: Full (active card) */
+.sticky-scroll__card--full {
+  height: 520px;
+
+  bottom: 0;
+  z-index: 5;
+
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+/* State: First stacked card above */
+.sticky-scroll__card--stacked-1 {
+  height: 58px;
+
+  bottom: 640px;
+
+  z-index: 4;
+
+  opacity: 1;
+
+  border-radius: 30px;
+
+  background: #ebe8e6;
+}
+
+/* State: Second stacked card above */
+
+
+/* State: Hidden (not yet reached) */
+
+
+/* ── Card Image ── */
+
+
+/* ── Card Label (shown when stacked) ── */
+
+
+
+
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .sticky-scroll-section {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-scroll__right {
+    display: none;
+  }
+
+  .sticky-scroll__left {
+    padding: 0 24px;
+  }
+
+  .sticky-scroll__text-block {
+    min-height: 80vh;
+  }
+}
+
+
+/* ── RIGHT COLUMN (sticky) ── */
+.sticky-scroll__right {
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 80px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-right: 60px;
+}
+
+/* ── Cards Stack ── */
+.sticky-scroll__stack {
+  position: relative;
+
+  width: 520px;
+  height: 620px;
+}
+
+/* ── Individual Card ── */
+.sticky-scroll__card {
+  position: absolute;
+
+  width: 100%;
+  overflow: hidden;
+
+  border-radius: 34px;
+
+  background: #f4f1ef;
+
+  transition:
+    all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.08);
+
+  opacity: 0;
+}
+
+/* ACTIVE CARD */
+.sticky-scroll__card--full {
+  height: 220px;
+
+  bottom: 0;
+
+  z-index: 5;
+
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+/* STACK CARD 1 */
+.sticky-scroll__card--stacked-1 {
+  height: 58px;
+
+  bottom: 540px;
+
+  z-index: 4;
+
+  opacity: 1;
+
+  border-radius: 30px;
+
+  background: #ebe8e6;
+}
+
+/* STACK CARD 2 */
+
+
+/* HIDDEN */
+.sticky-scroll__card--hidden {
+  opacity: 0;
+
+  transform: translateY(40px);
+
+  pointer-events: none;
+}
+
+/* ── Card Image ── */
+
+
+
+
+
+
+
+
+/* STACKED CARDS — IMAGE HIDE */
+.sticky-scroll__card--stacked-1 img,
+.sticky-scroll__card--stacked-2 img {
+  opacity: 0;
+}
+
+/* FULL CARD — IMAGE SHOW */
+.sticky-scroll__card--full img {
+  opacity: 1;
+}
+
+.sticky-scroll__card img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  transition: opacity 0.4s ease;
+}
+
+
+/* ── Cards Stack ── */
+.sticky-scroll__stack {
+  position: relative;
+
+  width: 480px;
+  height: 650px;
+}
+
+/* ── CARD ── */
+.sticky-scroll__card {
+  position: absolute;
+
+  width: 100%;
+  height: 460px;
+
+  overflow: hidden;
+
+  border-radius: 34px;
+
+  background: #ece9e7;
+
+  transition:
+    all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* IMAGE CARD */
+.sticky-scroll__card--full {
+  top: 95px;
+
+  opacity: 1;
+
+  z-index: 5;
+
+  transform: scale(1);
+}
+
+/* TOP STACK */
+.sticky-scroll__card--stacked-1 {
+  top: 0;
+
+  height: 48px;
+
+  opacity: 1;
+
+  z-index: 4;
+
+  border-radius: 30px;
+}
+
+/* BOTTOM STACK */
+.sticky-scroll__card--stacked-2 {
+  bottom: 0;
+
+  height: 48px;
+
+  opacity: 1;
+
+  z-index: 3;
+
+  border-radius: 30px;
+}
+
+/* HIDDEN */
+
+
+.sticky-scroll-wrapper {
+  position: relative;
+  background: #f8f7f5;
+
+  padding-top: 120px;
+}
+
+
+/* =========================
+   ACTIVE IMAGE
+========================= */
+
+.sticky-scroll__card--full {
+
+  height: 360px;
+
+  bottom: 50px;
+
+  z-index: 5;
+
+  opacity: 1;
+}
+
+/* =========================
+   TOP STACK 1
+========================= */
+
+.sticky-scroll__card--stacked-top-1 {
+
+  height: 42px;
+
+  bottom: 570px;
+
+  z-index: 4;
+
+  opacity: 1;
+
+  background: #dfd7cf;
+
+  box-shadow: none;
+}
+
+/* =========================
+   TOP STACK 2
+========================= */
+
+.sticky-scroll__card--stacked-top-2 {
+
+  height: 42px;
+
+  bottom: 7000px;
+
+  z-index: 3;
+
+  opacity: 1;
+
+  background: #dfd7cf;
+
+  box-shadow: none;
+}
+
+/* =========================
+   BOTTOM STACK 1
+========================= */
+
+.sticky-scroll__card--stacked-bottom-1 {
+
+  height: 42px;
+
+  bottom: 500px;
+
+  z-index: 2;
+
+  opacity: 1;
+
+  background: #dfd7cf;
+
+  box-shadow: none;
+}
+
+/* =========================
+   BOTTOM STACK 2
+========================= */
+
+.sticky-scroll__card--stacked-bottom-2 {
+
+  height: 42px;
+
+  bottom: 100px;
+
+  z-index: 1;
+
+  opacity: 1;
+
+  background: #dfd7cf;
+
+  box-shadow: none;
+}
+
+/* =========================
+   HIDE IMAGES IN STACKS
+========================= */
+
+.sticky-scroll__card--stacked-top-1 img,
+.sticky-scroll__card--stacked-top-2 img,
+.sticky-scroll__card--stacked-bottom-1 img,
+.sticky-scroll__card--stacked-bottom-2 img {
+
+  opacity: 0;
+}
+
+
+/* ───────── TAG ───────── */
+
+.sticky-scroll__tag {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  color: #0b4d8d;
+
+  margin-bottom: 28px;
+}
+
+.sticky-scroll__tag::before {
+
+  content: "";
+
+  width: 42px;
+
+  height: 3px;
+
+  background: #0b4d8d;
+}
+
+/* ───────── HEADING ───────── */
+
+.sticky-scroll__text-block h2 {
+
+  font-family: "Times New Roman", serif;
+
+  font-size: 58px;
+
+  line-height: 1.1;
+
+  font-weight: 500;
+
+  color: #17324d;
+
+  max-width: 760px;
+
+  margin-bottom: 28px;
+}
+
+/* ───────── DESCRIPTION ───────── */
+
+.sticky-scroll__text-block p {
+
+  font-size: 18px;
+
+  line-height: 2;
+
+  color: #5c6773;
+
+  max-width: 760px;
+
+  margin-bottom: 38px;
+}
+
+/* ───────── POINTS ───────── */
+
+.sticky-scroll__points {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 22px;
+
+  margin-bottom: 38px;
+}
+
+.sticky-scroll__point {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  color: #2d3b4d;
+
+  font-size: 16px;
+
+  font-weight: 500;
+}
+
+.sticky-scroll__point-dot {
+
+  width: 18px;
+
+  height: 18px;
+
+  border-radius: 50%;
+
+  background: #7db8ff;
+
+  position: relative;
+}
+
+.sticky-scroll__point-dot::after {
+
+  content: "✓";
+
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: white;
+
+  font-size: 11px;
+
+  font-weight: bold;
+}
+
+/* ───────── BUTTON ───────── */
+
+.sticky-scroll__btn2 {
+
+  border: none;
+
+  background: transparent;
+
+  color: #0b4d8d;
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0;
+}
+
+.sticky-scroll__btn2 span {
+
+  transition: 0.3s ease;
+}
+
+.sticky-scroll__btn2:hover span {
+
+  transform: translateX(8px);
+}
+
+
+/* ───────── TAG ───────── */
+
+.sticky-scroll__tag {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.6px;
+
+  color: #0d4b86;
+
+  margin-bottom: 26px;
+
+  text-transform: uppercase;
+}
+
+.sticky-scroll__tag::before {
+
+  content: "";
+
+  width: 54px;
+
+  height: 3px;
+
+  background: #0d4b86;
+}
+
+/* ───────── HEADING ───────── */
+
+.sticky-scroll__text-block h2 {
+
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: 62px;
+
+  line-height: 1.02;
+
+  font-weight: 500;
+
+  letter-spacing: -1px;
+
+  color: #17324d;
+
+  max-width: 900px;
+
+  margin-bottom: 28px;
+}
+
+/* ───────── DESCRIPTION ───────── */
+
+.sticky-scroll__text-block p {
+
+  font-family: "Inter", sans-serif;
+
+  font-size: 15px;
+
+  line-height: 2;
+
+  font-weight: 400;
+
+  color: #5b6675;
+
+  max-width: 760px;
+
+  margin-bottom: 34px;
+}
+
+/* ───────── POINTS ───────── */
+
+.sticky-scroll__points {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 22px;
+
+  margin-bottom: 38px;
+}
+
+.sticky-scroll__point {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  font-size: 16px;
+
+  color: #17324d;
+
+  font-weight: 500;
+}
+
+.sticky-scroll__point-dot {
+
+  width: 20px;
+
+  height: 20px;
+
+  border-radius: 50%;
+
+  background: #7db8ff;
+
+  position: relative;
+
+  flex-shrink: 0;
+}
+
+.sticky-scroll__point-dot::after {
+
+  content: "✓";
+
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: white;
+
+  font-size: 11px;
+
+  font-weight: bold;
+}
+
+/* ───────── BUTTON ───────── */
+
+.sticky-scroll__btn2 {
+
+  border: none;
+
+  background: transparent;
+
+  color: #0d4b86;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0;
+}
+
+.sticky-scroll__btn2 span {
+
+  transition: 0.3s ease;
+}
+
+.sticky-scroll__btn2:hover span {
+
+  transform: translateX(8px);
+}
+
+
+/* =========================
+   ACTIVE IMAGE
+========================= */
+
+.sticky-scroll__card--full {
+
+  height: 350px;
+
+  bottom: 110px;
+
+  z-index: 5;
+
+  opacity: 1;
+
+  transform: translateY(0);
+
+  border-radius: 36px;
+}
+
+/* =========================
+   TOP STACK 1
+========================= */
+
+.sticky-scroll__card--stacked-top-1 {
+
+  height: 44px;
+
+  bottom: 520px;
+
+  z-index: 4;
+
+  opacity: 1;
+
+  background: #ddd6cf;
+
+  border-radius: 30px;
+
+  transform: scale(0.97);
+}
+
+/* =========================
+   TOP STACK 2
+========================= */
+
+.sticky-scroll__card--stacked-top-2 {
+
+  height: 44px;
+
+  bottom: 575px;
+
+  z-index: 3;
+
+  opacity: 1;
+
+  background: #ece6df;
+
+  border-radius: 30px;
+
+  transform: scale(0.94);
+}
+
+/* =========================
+   BOTTOM STACK 1
+========================= */
+
+.sticky-scroll__card--stacked-bottom-1 {
+
+  height: 44px;
+
+  bottom: 55px;
+
+  z-index: 2;
+
+  opacity: 1;
+
+  background: #ddd6cf;
+
+  border-radius: 30px;
+
+  transform: scale(0.97);
+}
+
+/* =========================
+   BOTTOM STACK 2
+========================= */
+
+.sticky-scroll__card--stacked-bottom-2 {
+
+  height: 44px;
+
+  bottom: 0;
+
+  z-index: 1;
+
+  opacity: 1;
+
+  background: #ece6df;
+
+  border-radius: 30px;
+
+  transform: scale(0.94);
+}
+
+/* =========================
+   CARD IMAGE
+========================= */
+
+.sticky-scroll__card img {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  transition:
+    opacity 0.5s ease,
+    transform 0.7s ease;
+}
+
+/* =========================
+   HIDE STACK IMAGES
+========================= */
+
+.sticky-scroll__card--stacked-top-1 img,
+.sticky-scroll__card--stacked-top-2 img,
+.sticky-scroll__card--stacked-bottom-1 img,
+.sticky-scroll__card--stacked-bottom-2 img {
+
+  opacity: 0;
+}
+
+/* =========================
+   SHOW ACTIVE IMAGE
+========================= */
+
+.sticky-scroll__card--full img {
+
+  opacity: 1;
+
+  transform: scale(1.02);
+}
