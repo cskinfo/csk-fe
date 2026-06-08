@@ -430,18 +430,25 @@ const fetchGallery = async () => {
 
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px" }}>
         {/* ── Section Header ── */}
-      <motion.div
-  initial={{ opacity: 0, y: 40 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.7 }}
+<motion.div
+  initial={{
+    opacity: 0,
+    scale: 0.98,
+  }}
+  animate={{
+    opacity: 1,
+    scale: 1,
+  }}
+  transition={{
+    duration: 0.35,
+  }}
   style={{
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     textAlign: "center",
     marginBottom: "52px",
-    position:"relative"
+    position: "relative",
   }}
 >
           {/* Pill badge */}

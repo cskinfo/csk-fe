@@ -11,7 +11,7 @@ import CareerPage from "./Pages/CareerPage";
 import GalleryPage from "./Pages/GalleryPage";
 import AdminPage from "./Pages/AdminPage";
 import ContactDetailsPage from "./Pages/ContactDetailsPage";
-
+import ScrollToTop from "./components/ScrollToTop";
 
 
 function App() {
@@ -24,6 +24,7 @@ function App() {
            ka apna white background hai, parent ka dark override nahi karega
            kyunki StickyScroll apna bg-white set karta hai
       */}
+       <ScrollToTop />
       <div className="min-h-screen ">
         <Navbar />
         <Routes>
