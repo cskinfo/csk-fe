@@ -1,9 +1,9 @@
 import React from "react";
 import heroBg from "../../assets/AboutPagePhoto/aboutImage.jpg";
 import AboutHero from "./Abouthero";
-import cultureImg1 from "../../assets/AboutPagePhoto/cultureimg1.jpg";
+import cultureImg1 from "../../assets/AboutPagePhoto/cultureImg1.jpg";
 import { Link } from "react-router-dom";
-import cultureImg2 from "../../assets/AboutPagePhoto/cultureimg2.jpg";
+import cultureImg2 from "../../assets/AboutPagePhoto/cultureImg2.jpg";
 
 import sectionthreeimg from "../../assets/AboutPagePhoto/sectionthreeimg.jpg";
 import AreaCovered from "./Areacovered";
