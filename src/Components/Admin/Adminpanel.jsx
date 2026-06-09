@@ -367,7 +367,7 @@ function Dashboard({ jobs, photos, setTab }) {
                     {jobs.length === 0
                         ? <p style={{ fontSize: 13, color: T.textMuted, textAlign: "center", padding: "20px 0" }}>No jobs posted yet</p>
                         : [...jobs].reverse().slice(0, 5).map(job => (
-                            <div key={job._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: T.rowBorder, fontSize: 13 }}>
+                            <div key={job.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: T.rowBorder, fontSize: 13 }}>
                                 <span style={{ color: T.textPrimary, fontWeight: 500 }}>{job.title}</span>
                                 <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 20, padding: "2px 9px", background: job.badgeColor === "orange" ? T.badgeOrangeBg : job.badgeColor === "blue" ? T.badgeBlueBg : T.badgePurpleBg, color: job.badgeColor === "orange" ? T.badgeOrangeTx : job.badgeColor === "blue" ? T.badgeBlueTx : T.badgePurpleTx }}>{job.badge}</span>
                             </div>
@@ -498,13 +498,13 @@ function JobsManager({ jobs, setJobs }) {
     const saveEdit = async (form) => {
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/jobs/${editItem._id}`,
+                `http://localhost:5000/api/jobs/${editItem.id}`,
                 form
             );
 
             setJobs(
                 jobs.map((job) =>
-                    job._id === editItem._id
+                    job.id === editItem.id
                         ? res.data
                         : job
                 )
@@ -523,7 +523,7 @@ function JobsManager({ jobs, setJobs }) {
 
             setJobs(
                 jobs.filter(
-                    (job) => job._id !== deleteId
+                    (job) => job.id !== deleteId
                 )
             );
 
@@ -548,7 +548,7 @@ function JobsManager({ jobs, setJobs }) {
                 ? <div style={{ textAlign: "center", padding: "80px 0" }}><div style={{ fontSize: 48, marginBottom: 14 }}>💼</div><p style={{ fontSize: 16, fontWeight: 600, color: T.emptyTx }}>No jobs posted yet</p><p style={{ fontSize: 13, marginTop: 6, color: T.textMuted }}>Click "Add Job Post" to create your first listing</p></div>
                 : <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                     {jobs.map(job => (
-                        <div key={job._id} style={{ background: T.cardBgSolid, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, display: "flex", alignItems: "flex-start", gap: 18 }}>
+                        <div key={job.id} style={{ background: T.cardBgSolid, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, display: "flex", alignItems: "flex-start", gap: 18 }}>
                             <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
                                     <span style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>{job.title}</span>
@@ -564,7 +564,7 @@ function JobsManager({ jobs, setJobs }) {
                             </div>
                             <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                                 <button onClick={() => setEditItem(job)} style={{ padding: "7px 14px", background: T.editBg, color: T.editTx, border: `1px solid ${T.editBdr}`, borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 700, fontFamily: "inherit" }}>Edit</button>
-                                <button onClick={() => setDeleteId(job._id)} style={{ padding: "7px 14px", background: T.delBg, color: T.delTx, border: `1px solid ${T.delBdr}`, borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 700, fontFamily: "inherit" }}>Delete</button>
+                                <button onClick={() => setDeleteId(job.id)} style={{ padding: "7px 14px", background: T.delBg, color: T.delTx, border: `1px solid ${T.delBdr}`, borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 700, fontFamily: "inherit" }}>Delete</button>
                             </div>
                         </div>
                     ))}
@@ -715,13 +715,13 @@ function GalleryManager({ photos, setPhotos }) {
     const saveEdit = async (form) => {
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/gallery/${editItem._id}`,
+                `http://localhost:5000/api/gallery/${editItem.id}`,
                 form
             );
 
             setPhotos(
                 photos.map((p) =>
-                    p._id === editItem._id
+                    p.id === editItem.id
                         ? res.data
                         : p
                 )
@@ -740,7 +740,7 @@ function GalleryManager({ photos, setPhotos }) {
 
             setPhotos(
                 photos.filter(
-                    (p) => p._id !== deleteId
+                    (p) => p.id !== deleteId
                 )
             );
 
@@ -767,7 +767,7 @@ function GalleryManager({ photos, setPhotos }) {
                 ? <div style={{ textAlign: "center", padding: "80px 0" }}><div style={{ fontSize: 48, marginBottom: 14 }}>🖼️</div><p style={{ fontSize: 16, fontWeight: 600, color: T.emptyTx }}>Gallery is empty</p><p style={{ fontSize: 13, marginTop: 6, color: T.textMuted }}>Upload photos to display on the career page</p></div>
                 : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(230px,1fr))", gap: 16 }}>
                     {photos.map(photo => (
-                        <div key={photo._id} style={{ background: T.cardBgSolid, border: `1px solid ${T.border}`, borderRadius: 14, overflow: "hidden" }}>
+                        <div key={photo.id} style={{ background: T.cardBgSolid, border: `1px solid ${T.border}`, borderRadius: 14, overflow: "hidden" }}>
                             <div style={{ height: 140, overflow: "hidden", background: T.inputBg, position: "relative" }}>
                                 {photo.image
                                     ? <img src={photo.image} alt={photo.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -781,7 +781,7 @@ function GalleryManager({ photos, setPhotos }) {
                                     <span style={{ fontSize: 10, color: T.spanTagTx, background: T.spanTagBg, borderRadius: 6, padding: "2px 8px", fontWeight: 600 }}>{photo.span === "wide" ? "Wide (2-col)" : "Normal (1-col)"}</span>
                                     <div style={{ display: "flex", gap: 6 }}>
                                         <button onClick={() => setEditItem(photo)} style={{ padding: "4px 11px", background: T.editBg, color: T.editTx, border: `1px solid ${T.editBdr}`, borderRadius: 6, cursor: "pointer", fontSize: 11, fontWeight: 700, fontFamily: "inherit" }}>Edit</button>
-                                        <button onClick={() => setDeleteId(photo._id)} style={{ padding: "4px 11px", background: T.delBg, color: T.delTx, border: `1px solid ${T.delBdr}`, borderRadius: 6, cursor: "pointer", fontSize: 11, fontWeight: 700, fontFamily: "inherit" }}>Del</button>
+                                        <button onClick={() => setDeleteId(photo.id)} style={{ padding: "4px 11px", background: T.delBg, color: T.delTx, border: `1px solid ${T.delBdr}`, borderRadius: 6, cursor: "pointer", fontSize: 11, fontWeight: 700, fontFamily: "inherit" }}>Del</button>
                                     </div>
                                 </div>
                             </div>
@@ -827,7 +827,7 @@ function ApplicationsManager({
             ) : (
                 applications.map((app) => (
                     <div
-                        key={app._id}
+                        key={app.id}
                         style={{
                             position: "relative",
                             background: T.cardBgSolid,
@@ -845,7 +845,7 @@ function ApplicationsManager({
                                         "Delete this application?"
                                     )
                                 ) {
-                                    deleteApplication(app._id);
+                                    deleteApplication(app.id);
                                 }
                             }}
                             style={{
@@ -1052,7 +1052,7 @@ export default function AdminPanel() {
 
             setApplications(
                 applications.filter(
-                    (app) => app._id !== id
+                    (app) => app.id !== id
                 )
             );
         } catch (err) {
