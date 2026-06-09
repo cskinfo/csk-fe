@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./Components/Navbar";
 import HomePage from "./Pages/HomePage";
 
 import Footer from "./Components/Footer";
@@ -11,7 +11,8 @@ import CareerPage from "./Pages/CareerPage";
 import GalleryPage from "./Pages/GalleryPage";
 import AdminPage from "./Pages/AdminPage";
 import ContactDetailsPage from "./Pages/ContactDetailsPage";
-import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTop from "./Components/ScrollToTop";
+import AboutPage from "./Components/About/Aboutpage";
 
 
 function App() {
@@ -40,6 +41,8 @@ function App() {
   path="/ContactPage"
   element={<ContactDetailsPage />}
 />
+
+      <Route path="/AboutPage" element={<AboutPage/>}/>
              
            
            
