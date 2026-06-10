@@ -484,7 +484,7 @@ function JobsManager({ jobs, setJobs }) {
     const addJob = async (form) => {
         try {
             const res = await axios.post(
-                "http://localhost:5000/api/jobs",
+                "https://api.cskinfotech.com/api/jobs",
                 form
             );
 
@@ -498,7 +498,7 @@ function JobsManager({ jobs, setJobs }) {
     const saveEdit = async (form) => {
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/jobs/${editItem.id}`,
+                `https://api.cskinfotech.com/api/jobs/${editItem.id}`,
                 form
             );
 
@@ -518,7 +518,7 @@ function JobsManager({ jobs, setJobs }) {
     const confirmDelete = async () => {
         try {
             await axios.delete(
-                `http://localhost:5000/api/jobs/${deleteId}`
+                `https://api.cskinfotech.com/api/jobs/${deleteId}`
             );
 
             setJobs(
@@ -692,7 +692,7 @@ function GalleryManager({ photos, setPhotos }) {
             fd.append("span", form.span);
 
             const res = await axios.post(
-                "http://localhost:5000/api/gallery",
+                "https://api.cskinfotech.com/api/gallery",
                 fd,
                 {
                     headers: {
@@ -715,7 +715,7 @@ function GalleryManager({ photos, setPhotos }) {
     const saveEdit = async (form) => {
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/gallery/${editItem.id}`,
+                `https://api.cskinfotech.com/api/gallery/${editItem.id}`,
                 form
             );
 
@@ -735,7 +735,7 @@ function GalleryManager({ photos, setPhotos }) {
     const confirmDelete = async () => {
         try {
             await axios.delete(
-                `http://localhost:5000/api/gallery/${deleteId}`
+                `https://api.cskinfotech.com/api/gallery/${deleteId}`
             );
 
             setPhotos(
@@ -1011,7 +1011,7 @@ export default function AdminPanel() {
     const fetchJobs = async () => {
         try {
             const res = await axios.get(
-                "http://localhost:5000/api/jobs"
+                "https://api.cskinfotech.com/api/jobs"
             );
 
             setJobs(res.data);
@@ -1023,7 +1023,7 @@ export default function AdminPanel() {
     const fetchGallery = async () => {
         try {
             const res = await axios.get(
-                "http://localhost:5000/api/gallery"
+                "https://api.cskinfotech.com/api/gallery"
             );
 
             setPhotos(res.data);
@@ -1035,7 +1035,7 @@ export default function AdminPanel() {
     const fetchApplications = async () => {
         try {
             const res = await axios.get(
-                "http://localhost:5000/api/applications"
+                "https://api.cskinfotech.com/api/applications"
             );
 
             setApplications(res.data);
@@ -1047,7 +1047,7 @@ export default function AdminPanel() {
     const deleteApplication = async (id) => {
         try {
             await axios.delete(
-                `http://localhost:5000/api/applications/${id}`
+                `https://api.cskinfotech.com/api/applications/${id}`
             );
 
             setApplications(
