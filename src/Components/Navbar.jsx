@@ -11,7 +11,7 @@ const navLinks = [
   { label: "Services", hasDropdown: true ,path: "/Service"},
   { label: "Career", hasDropdown: true ,path: "/CareerPage"},
   { label: "Gallery", hasDropdown: false,path: "/GalleryPage" },
-  { label: "About us", hasDropdown: false,path: "/Solution" },
+  { label: "About us", hasDropdown: false,path: "/AboutPage" },
   { label: "Admin", hasDropdown: true,path: "/AdminPage" },
 ];
 

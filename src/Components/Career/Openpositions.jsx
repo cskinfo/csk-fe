@@ -27,7 +27,7 @@ export default function OpenPositions() {
 const fetchJobs = async () => {
   try {
     const res = await axios.get(
-      "http://localhost:5000/api/jobs"
+      "https://api.cskinfotech.com/api/jobs"
     );
 
     setJobs(res.data);
@@ -78,7 +78,7 @@ const fetchJobs = async () => {
     }
 
     await axios.post(
-      "http://localhost:5000/api/applications",
+      "https://api.cskinfotech.com/api/applications",
       data,
       {
         headers: {
