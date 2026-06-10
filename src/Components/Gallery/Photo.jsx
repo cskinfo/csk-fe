@@ -255,6 +255,7 @@ function ScreenIllustration() {
 // ── Single Gallery Card ──────────────────────────────────────
 function GalleryCard({ item, isWide }) {
   const [hovered, setHovered] = useState(false);
+  const [imageError, setImageError] = useState(false); // 👈 Track if image fails to load
   const config = CATEGORIES[item.category];
 
   const renderPlaceholder = () => {
@@ -287,6 +288,7 @@ function GalleryCard({ item, isWide }) {
         <img
           src={item.image}
           alt={item.title}
+          onError={() => setImageError(true)} // 👈 Fallback if URL goes 404
           style={{
             position: "absolute",
             inset: 0,
