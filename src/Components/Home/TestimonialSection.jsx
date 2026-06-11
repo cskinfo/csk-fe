@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 
-// ── 8 Testimonials ─────────────────────────────────────────
 const testimonials = [
   {
     name: "Natalie Rose",
@@ -52,118 +51,37 @@ const testimonials = [
   },
 ];
 
-// Show 2 at a time → 4 pages total
 const PAIR_SIZE = 2;
 const pairs = [];
 for (let i = 0; i < testimonials.length; i += PAIR_SIZE) {
   pairs.push(testimonials.slice(i, i + PAIR_SIZE));
 }
 
-// ── Card colors alternating ────────────────────────────────
 const CARD_STYLES = [
   { bg: "#1a3a6b", accent: "#f0a500", textColor: "#ffffff", quoteColor: "rgba(255,255,255,0.85)" },
   { bg: "#4a90d9", accent: "#ffffff", textColor: "#ffffff", quoteColor: "rgba(255,255,255,0.9)" },
 ];
 
-// ── Single Testimonial Card ────────────────────────────────
 function TestimonialCard({ person, colorIdx }) {
   const C = CARD_STYLES[colorIdx % 2];
   return (
-    <div
-      style={{
-        flex: 1,
-        background: C.bg,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        padding: "48px 32px 40px",
-        position: "relative",
-        minHeight: 380,
-      }}
-    >
-      {/* Avatar */}
-      <div
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: "50%",
-          overflow: "hidden",
-          border: "4px solid rgba(255,255,255,0.3)",
-          marginBottom: 20,
-          flexShrink: 0,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
-        }}
-      >
-        <img
-          src={person.avatar}
-          alt={person.name}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
+    <div className="t-card" style={{ background: C.bg }}>
+      <div className="t-avatar-wrap">
+        <img src={person.avatar} alt={person.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </div>
-
-      {/* Name */}
-      <h3
-        style={{
-          fontSize: "1.3rem",
-          fontWeight: 800,
-          color: C.textColor,
-          marginBottom: 4,
-          fontFamily: "'Segoe UI', system-ui, sans-serif",
-          letterSpacing: "-0.01em",
-        }}
-      >
-        {person.name}
-      </h3>
-
-      {/* Role */}
-      <p
-        style={{
-          fontSize: "0.75rem",
-          color: "rgba(255,255,255,0.65)",
-          marginBottom: 14,
-          fontFamily: "'Segoe UI', system-ui, sans-serif",
-          letterSpacing: "0.04em",
-          textTransform: "uppercase",
-        }}
-      >
-        {person.role}
-      </p>
-
-      {/* Accent line */}
-      <div
-        style={{
-          width: 40,
-          height: 3,
-          background: C.accent,
-          borderRadius: 2,
-          marginBottom: 22,
-        }}
-      />
-
-      {/* Quote */}
-      <p
-        style={{
-          fontSize: "0.92rem",
-          fontStyle: "italic",
-          color: C.quoteColor,
-          lineHeight: 1.75,
-          fontFamily: "Georgia, serif",
-          maxWidth: 260,
-        }}
-      >
-        "{person.text}"
-      </p>
+      <h3 className="t-name" style={{ color: C.textColor }}>{person.name}</h3>
+      <p className="t-role">{person.role}</p>
+      <div className="t-line" style={{ background: C.accent }} />
+      <p className="t-quote" style={{ color: C.quoteColor }}>"{person.text}"</p>
     </div>
   );
 }
 
-// ── Main Section ───────────────────────────────────────────
 export default function TestimonialsSection() {
   const [currentPage, setCurrentPage] = useState(0);
   const [flipping, setFlipping]       = useState(false);
-  const [flipDir, setFlipDir]         = useState("forward"); // forward | backward
-  const [displayPage, setDisplayPage] = useState(0);         // what's actually rendered
+  const [flipDir, setFlipDir]         = useState("forward");
+  const [displayPage, setDisplayPage] = useState(0);
   const timerRef = useRef(null);
 
   const totalPages = pairs.length;
@@ -172,26 +90,16 @@ export default function TestimonialsSection() {
     if (flipping) return;
     setFlipDir(dir);
     setFlipping(true);
-
-    // After half the flip (page turns), swap content
-    setTimeout(() => {
-      setDisplayPage(nextPage);
-      setCurrentPage(nextPage);
-    }, 350);
-
-    // After full flip completes
-    setTimeout(() => {
-      setFlipping(false);
-    },500);
+    setTimeout(() => { setDisplayPage(nextPage); setCurrentPage(nextPage); }, 350);
+    setTimeout(() => { setFlipping(false); }, 500);
   };
 
-  // Auto-advance every 3 seconds
   useEffect(() => {
     timerRef.current = setInterval(() => {
       setCurrentPage(prev => {
         const next = (prev + 1) % totalPages;
         goTo(next, "forward");
-        return prev; // state update handled inside goTo
+        return prev;
       });
     }, 3000);
     return () => clearInterval(timerRef.current);
@@ -212,120 +120,320 @@ export default function TestimonialsSection() {
   const pair = pairs[displayPage];
 
   return (
-    <section
-      style={{
-        background: "#f4f6f9",
-        padding: "80px 0",
-        fontFamily: "'Segoe UI', system-ui, sans-serif",
-        overflow: "hidden",
-      }}
-    >
+    <section className="t-section">
       <style>{`
+
+        /* ════════════════════════════════
+           ANIMATIONS — unchanged
+        ════════════════════════════════ */
         @keyframes flipForwardOut {
-          0%   { transform: perspective(1400px) rotateY(0deg); opacity: 1; }
+          0%   { transform: perspective(1400px) rotateY(0deg);   opacity: 1; }
           100% { transform: perspective(1400px) rotateY(-90deg); opacity: 0; }
         }
         @keyframes flipForwardIn {
-          0%   { transform: perspective(1400px) rotateY(90deg); opacity: 0; }
-          100% { transform: perspective(1400px) rotateY(0deg); opacity: 1; }
+          0%   { transform: perspective(1400px) rotateY(90deg);  opacity: 0; }
+          100% { transform: perspective(1400px) rotateY(0deg);   opacity: 1; }
         }
         @keyframes flipBackwardOut {
-          0%   { transform: perspective(1400px) rotateY(0deg); opacity: 1; }
+          0%   { transform: perspective(1400px) rotateY(0deg);  opacity: 1; }
           100% { transform: perspective(1400px) rotateY(90deg); opacity: 0; }
         }
         @keyframes flipBackwardIn {
           0%   { transform: perspective(1400px) rotateY(-90deg); opacity: 0; }
-          100% { transform: perspective(1400px) rotateY(0deg); opacity: 1; }
+          100% { transform: perspective(1400px) rotateY(0deg);   opacity: 1; }
         }
-        .flip-out-forward { animation: flipForwardOut 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
-        .flip-in-forward  { animation: flipForwardIn  0.35s cubic-bezier(0.4,0,0.2,1) 0.35s forwards; opacity: 0; }
+        @keyframes progressBar {
+          from { width: 0% }
+          to   { width: 100% }
+        }
+        .flip-out-forward  { animation: flipForwardOut  0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+        .flip-in-forward   { animation: flipForwardIn   0.35s cubic-bezier(0.4,0,0.2,1) 0.35s forwards; opacity: 0; }
         .flip-out-backward { animation: flipBackwardOut 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
         .flip-in-backward  { animation: flipBackwardIn  0.35s cubic-bezier(0.4,0,0.2,1) 0.35s forwards; opacity: 0; }
 
-        .testimonial-dot {
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
+        .testimonial-dot { transition: all 0.3s ease; cursor: pointer; }
         .testimonial-dot:hover { transform: scale(1.3); }
-        .nav-arrow {
-          transition: all 0.2s ease;
-          cursor: pointer;
-        }
+        .nav-arrow { transition: all 0.2s ease; cursor: pointer; }
         .nav-arrow:hover { transform: scale(1.1); background: #1a3a6b !important; color: white !important; }
+
+        /* ════════════════════════════════
+           BASE — mobile first
+        ════════════════════════════════ */
+
+        .t-section {
+          background: #f4f6f9;
+          padding: 48px 0 60px;
+          font-family: 'Segoe UI', system-ui, sans-serif;
+          overflow: hidden;
+        }
+
+        /* OUTER WRAPPER */
+        .t-wrapper {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 20px;
+          display: flex;
+          flex-direction: column;   /* stack on mobile */
+          align-items: stretch;
+          gap: 48px;
+        }
+
+        /* ── LEFT: HEADING PANEL ── */
+        .t-left {
+          flex: none;
+          width: 100%;
+          text-align: center;       /* center on mobile */
+        }
+        .t-label {
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: #f0a500;
+          margin-bottom: 10px;
+        }
+        .t-heading {
+          font-size: clamp(1.7rem, 6vw, 2.8rem);
+          font-weight: 900;
+          color: #1a2c5b;
+          line-height: 1.15;
+          margin-bottom: 18px;
+          letter-spacing: -0.02em;
+        }
+        .t-body {
+          font-size: 0.92rem;
+          color: #6b7280;
+          line-height: 1.75;
+          margin-bottom: 28px;
+          max-width: 480px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .t-join-btn {
+          display: inline-block;
+          background: #f0a500;
+          color: #fff;
+          font-weight: 800;
+          font-size: 0.82rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          padding: 14px 30px;
+          border-radius: 4px;
+          text-decoration: none;
+          box-shadow: 0 4px 16px rgba(240,165,0,0.35);
+          transition: all 0.2s;
+        }
+        .t-join-btn:hover {
+          background: #d4920a;
+          transform: translateY(-2px);
+        }
+        .t-dots {
+          display: flex;
+          align-items: center;
+          justify-content: center;   /* center on mobile */
+          gap: 8px;
+          margin-top: 28px;
+        }
+
+        /* ── RIGHT: FLIP CARDS ── */
+        .t-right {
+          flex: 1;
+          position: relative;
+          padding: 0 28px;          /* room for nav arrows */
+        }
+        .t-flipbook {
+          display: flex;
+          flex-direction: column;   /* stack cards on mobile */
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow:
+            0 20px 60px rgba(26,58,107,0.22),
+            0 2px 8px rgba(0,0,0,0.08);
+          transform-style: preserve-3d;
+        }
+        .t-spine {
+          position: absolute;
+          top: 0; bottom: 0;
+          left: 50%;
+          width: 3px;
+          background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.18),
+            rgba(0,0,0,0.06),
+            rgba(0,0,0,0.18)
+          );
+          transform: translateX(-50%);
+          pointer-events: none;
+          z-index: 2;
+          display: none;            /* hidden on mobile (stacked) */
+        }
+        .t-progress-wrap {
+          position: absolute;
+          bottom: -14px;
+          left: 0; right: 0;
+          height: 3px;
+          background: #e2e8f0;
+          border-radius: 2px;
+          overflow: hidden;
+        }
+        .t-progress-bar {
+          height: 100%;
+          background: #f0a500;
+          border-radius: 2px;
+          animation: progressBar 3s linear forwards;
+        }
+
+        /* NAV ARROWS */
+        .t-nav-prev,
+        .t-nav-next {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 10;
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: #fff;
+          border: 2px solid #e2e8f0;
+          color: #1a3a6b;
+          font-size: 18px;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        }
+        .t-nav-prev { left: -6px; }
+        .t-nav-next { right: -6px; }
+
+        /* ── CARD ── */
+        .t-card {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 36px 24px 32px;
+          position: relative;
+          min-height: 320px;
+        }
+        .t-avatar-wrap {
+          width: 86px;
+          height: 86px;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 4px solid rgba(255,255,255,0.3);
+          margin-bottom: 16px;
+          flex-shrink: 0;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .t-name {
+          font-size: 1.15rem;
+          font-weight: 800;
+          margin-bottom: 4px;
+          letter-spacing: -0.01em;
+        }
+        .t-role {
+          font-size: 0.72rem;
+          color: rgba(255,255,255,0.65);
+          margin-bottom: 12px;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+        .t-line {
+          width: 40px;
+          height: 3px;
+          border-radius: 2px;
+          margin-bottom: 18px;
+        }
+        .t-quote {
+          font-size: 0.88rem;
+          font-style: italic;
+          line-height: 1.75;
+          font-family: Georgia, serif;
+          max-width: 260px;
+        }
+
+        /* ════════════════════════════════
+           TABLET  ≥ 640px
+        ════════════════════════════════ */
+        @media (min-width: 640px) {
+          .t-section  { padding: 64px 0 72px; }
+          .t-wrapper  { padding: 0 32px; }
+          .t-right    { padding: 0 32px; }
+          .t-nav-prev { left: -4px; }
+          .t-nav-next { right: -4px; }
+          .t-card     { padding: 40px 28px 36px; min-height: 340px; }
+          .t-avatar-wrap { width: 92px; height: 92px; }
+          .t-name     { font-size: 1.2rem; }
+          .t-quote    { font-size: 0.9rem; }
+        }
+
+        /* ════════════════════════════════
+           TABLET LANDSCAPE  ≥ 768px
+           Cards side-by-side again
+        ════════════════════════════════ */
+        @media (min-width: 768px) {
+          .t-flipbook { flex-direction: row; }  /* side-by-side cards */
+          .t-spine    { display: block; }        /* show spine divider */
+          .t-card     { min-height: 360px; }
+        }
+
+        /* ════════════════════════════════
+           DESKTOP  ≥ 1024px
+           Left + Right side-by-side layout
+        ════════════════════════════════ */
+        @media (min-width: 1024px) {
+          .t-section  { padding: 80px 0; }
+          .t-wrapper  {
+            flex-direction: row;     /* heading left, cards right */
+            align-items: center;
+            gap: 60px;
+            padding: 0 40px;
+          }
+          .t-left {
+            flex: 0 0 380px;
+            max-width: 380px;
+            text-align: left;        /* left-align on desktop */
+          }
+          .t-body     { margin-left: 0; margin-right: 0; }
+          .t-dots     { justify-content: flex-start; }
+          .t-right    { padding: 0 28px; }
+          .t-nav-prev { left: -22px; }
+          .t-nav-next { right: -22px; }
+          .t-nav-prev,
+          .t-nav-next { width: 44px; height: 44px; }
+          .t-card     { padding: 48px 32px 40px; min-height: 380px; }
+          .t-avatar-wrap { width: 100px; height: 100px; }
+          .t-name     { font-size: 1.3rem; }
+          .t-quote    { font-size: 0.92rem; }
+        }
+
+        /* ════════════════════════════════
+           LARGE DESKTOP  ≥ 1280px
+        ════════════════════════════════ */
+        @media (min-width: 1280px) {
+          .t-wrapper { padding: 0 48px; }
+        }
+
       `}</style>
 
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 40px",
-          display: "flex",
-          alignItems: "center",
-          gap: 60,
-        }}
-      >
-        {/* ── Left: Heading ── */}
-        <div style={{ flex: "0 0 380px", maxWidth: 380 }}>
-          <p
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              color: "#f0a500",
-              marginBottom: 12,
-            }}
-          >
-            Testimonials
-          </p>
-          <h2
-            style={{
-              fontSize: "clamp(2rem, 3.5vw, 2.8rem)",
-              fontWeight: 900,
-              color: "#1a2c5b",
-              lineHeight: 1.15,
-              marginBottom: 24,
-              letterSpacing: "-0.02em",
-            }}
-          >
+      <div className="t-wrapper">
+
+        {/* ── LEFT ── */}
+        <div className="t-left">
+          <p className="t-label">Testimonials</p>
+          <h2 className="t-heading">
             What Our Users<br />Are Saying
           </h2>
-          <p
-            style={{
-              fontSize: "1rem",
-              color: "#6b7280",
-              lineHeight: 1.75,
-              marginBottom: 36,
-            }}
-          >
-            Our clients value our commitment to innovation, technical expertise, responsive support, and ability to deliver scalable technology solutions that improve business efficiency, security, and operational performance.
+          <p className="t-body">
+            Our clients value our commitment to innovation, technical expertise,
+            responsive support, and ability to deliver scalable technology solutions
+            that improve business efficiency, security, and operational performance.
           </p>
-
-          {/* JOIN NOW button */}
-          <a
-            href="#"
-            style={{
-              display: "inline-block",
-              background: "#f0a500",
-              color: "#fff",
-              fontWeight: 800,
-              fontSize: "0.85rem",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              padding: "16px 36px",
-              borderRadius: 4,
-              textDecoration: "none",
-              boxShadow: "0 4px 16px rgba(240,165,0,0.35)",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = "#d4920a"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "#f0a500"; e.currentTarget.style.transform = "translateY(0)"; }}
-          >
-            Join Now
-          </a>
-
-          {/* Page indicator dots */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 36 }}>
+          <a className="t-join-btn" href="#">Join Now</a>
+          <div className="t-dots">
             {pairs.map((_, i) => (
               <div
                 key={i}
@@ -340,138 +448,38 @@ export default function TestimonialsSection() {
               />
             ))}
           </div>
-
-          {/* Page counter */}
-          {/* <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 10 }}>
-            {currentPage + 1} / {totalPages}
-          </p> */}
         </div>
 
-        {/* ── Right: Flip Cards ── */}
-        <div style={{ flex: 1, position: "relative" }}>
-          {/* Nav arrows */}
-          <button
-            className="nav-arrow"
-            onClick={handlePrev}
-            style={{
-              position: "absolute",
-              left: -22,
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: 10,
-              width: 44,
-              height: 44,
-              borderRadius: "50%",
-              background: "#fff",
-              border: "2px solid #e2e8f0",
-              color: "#1a3a6b",
-              fontSize: 18,
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-            }}
-          >
-            ‹
-          </button>
+        {/* ── RIGHT ── */}
+        <div className="t-right">
 
-          {/* Flip book container */}
+          {/* Prev */}
+          <button className="t-nav-prev nav-arrow" onClick={handlePrev}>‹</button>
+
+          {/* Flip book */}
           <div
-            style={{
-              display: "flex",
-              borderRadius: 16,
-              overflow: "hidden",
-              boxShadow: "0 20px 60px rgba(26,58,107,0.22), 0 2px 8px rgba(0,0,0,0.08)",
-              transformStyle: "preserve-3d",
-            }}
-            className={
+            className={`t-flipbook ${
               flipping
-                ? flipDir === "forward"
-                  ? "flip-out-forward"
-                  : "flip-out-backward"
-                : flipDir === "forward"
-                ? "flip-in-forward"
-                : "flip-in-backward"
-            }
+                ? flipDir === "forward" ? "flip-out-forward"  : "flip-out-backward"
+                : flipDir === "forward" ? "flip-in-forward"   : "flip-in-backward"
+            }`}
           >
             {pair.map((person, i) => (
               <TestimonialCard key={person.name} person={person} colorIdx={i} />
             ))}
           </div>
 
-          {/* Book spine shadow */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: "50%",
-              width: 3,
-              background: "linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0.06), rgba(0,0,0,0.18))",
-              transform: "translateX(-50%)",
-              pointerEvents: "none",
-              zIndex: 2,
-            }}
-          />
+          {/* Spine */}
+          <div className="t-spine" />
 
-          <button
-            className="nav-arrow"
-            onClick={handleNext}
-            style={{
-              position: "absolute",
-              right: -22,
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: 10,
-              width: 44,
-              height: 44,
-              borderRadius: "50%",
-              background: "#fff",
-              border: "2px solid #e2e8f0",
-              color: "#1a3a6b",
-              fontSize: 18,
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-            }}
-          >
-            ›
-          </button>
+          {/* Next */}
+          <button className="t-nav-next nav-arrow" onClick={handleNext}>›</button>
 
-          {/* Auto-play progress bar */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: -14,
-              left: 0,
-              right: 0,
-              height: 3,
-              background: "#e2e8f0",
-              borderRadius: 2,
-              overflow: "hidden",
-            }}
-          >
-            <div
-              key={currentPage}
-              style={{
-                height: "100%",
-                background: "#f0a500",
-                borderRadius: 2,
-                animation: "progressBar 3s linear forwards",
-              }}
-            />
+          {/* Progress bar */}
+          <div className="t-progress-wrap">
+            <div key={currentPage} className="t-progress-bar" />
           </div>
-          <style>{`
-            @keyframes progressBar {
-              from { width: 0% }
-              to   { width: 100% }
-            }
-          `}</style>
+
         </div>
       </div>
     </section>

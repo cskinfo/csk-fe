@@ -2,6 +2,7 @@ import { useState, useRef, createContext, useContext } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "./AdminPanel.css";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 // ─────────────────────────────────────────────────────────────
@@ -222,7 +223,7 @@ function LoginScreen({ onLogin }) {
                 {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
 
-            <div style={{ width: 400, background: T.loginCardBg, border: `1px solid ${T.loginCardBdr}`, borderRadius: 20, padding: "40px 36px", boxShadow: T.shadow }}>
+            <div className="csk-login-card" style={{ width: 400, background: T.loginCardBg, border: `1px solid ${T.loginCardBdr}`, borderRadius: 20, padding: "40px 36px", boxShadow: T.shadow }}>
                 <div style={{ textAlign: "center", marginBottom: 32 }}>
                     <div style={{ width: 56, height: 56, borderRadius: 16, background: "linear-gradient(135deg,#4f6ef7,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, margin: "0 auto 16px" }}>🛡️</div>
                     <h1 style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary, marginBottom: 6 }}>CSK Admin Panel</h1>
@@ -256,27 +257,24 @@ function LoginScreen({ onLogin }) {
 // ─────────────────────────────────────────────────────────────
 // SIDEBAR
 // ─────────────────────────────────────────────────────────────
-function Sidebar({ activeTab, setTab, onLogout, jobCount, photoCount, applicationCount }) {
+function Sidebar({ activeTab, setTab, onLogout, jobCount, photoCount, applicationCount, sidebarOpen, setSidebarOpen }) {
     const { T, isDark, toggleTheme } = useT();
     const navItems = [
         { id: "dashboard", icon: "📊", label: "Dashboard" },
-
         { id: "jobs", icon: "💼", label: "Job Posts", count: jobCount },
-
         { id: "gallery", icon: "🖼️", label: "Gallery", count: photoCount },
-
-        {
-            id: "applications",
-            icon: "📄",
-            label: "Applications",
-            count: applicationCount,
-        },
+        { id: "applications", icon: "📄", label: "Applications", count: applicationCount },
     ];
 
+    const handleNav = (id) => {
+        setTab(id);
+        setSidebarOpen(false); // mobile par item select karte hi drawer band ho jaye
+    };
+
     return (
-        <div style={{ width: 230, background: T.sidebarBg, borderRight: `1px solid ${T.border}`, display: "flex", flexDirection: "column", minHeight: "100vh", flexShrink: 0, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+        <div className={`csk-sidebar ${sidebarOpen ? "open" : ""}`} style={{ width: 230, background: T.sidebarBg, borderRight: `1px solid ${T.border}`, display: "flex", flexDirection: "column", minHeight: "100vh", flexShrink: 0, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
             {/* Brand */}
-            <div style={{ padding: "24px 20px 18px", borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ padding: "24px 20px 18px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 38, height: 38, borderRadius: 10, background: "linear-gradient(135deg,#4f6ef7,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🛡️</div>
                     <div>
@@ -284,6 +282,8 @@ function Sidebar({ activeTab, setTab, onLogout, jobCount, photoCount, applicatio
                         <div style={{ fontSize: 11, color: "#4f6ef7", fontWeight: 600 }}>Management Panel</div>
                     </div>
                 </div>
+                {/* Mobile-only close button */}
+                <button onClick={() => setSidebarOpen(false)} className="csk-sidebar-close" style={{ background: "transparent", border: "none", color: T.textSecondary, fontSize: 22, cursor: "pointer", lineHeight: 1 }}>×</button>
             </div>
 
             {/* Nav */}
@@ -291,7 +291,7 @@ function Sidebar({ activeTab, setTab, onLogout, jobCount, photoCount, applicatio
                 {navItems.map(item => {
                     const active = activeTab === item.id;
                     return (
-                        <button key={item.id} onClick={() => setTab(item.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 10, background: active ? T.activeBg : "transparent", border: `1px solid ${active ? T.activeBorder : "transparent"}`, color: active ? T.activeText : T.inactiveTx, marginBottom: 4, cursor: "pointer", textAlign: "left", fontSize: 13, fontWeight: active ? 700 : 400, fontFamily: "inherit", transition: "all 0.15s" }}>
+                        <button key={item.id} onClick={() => handleNav(item.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 10, background: active ? T.activeBg : "transparent", border: `1px solid ${active ? T.activeBorder : "transparent"}`, color: active ? T.activeText : T.inactiveTx, marginBottom: 4, cursor: "pointer", textAlign: "left", fontSize: 13, fontWeight: active ? 700 : 400, fontFamily: "inherit", transition: "all 0.15s" }}>
                             <span style={{ fontSize: 17 }}>{item.icon}</span>
                             <span style={{ flex: 1 }}>{item.label}</span>
                             {item.count != null && (
@@ -344,20 +344,20 @@ function Dashboard({ jobs, photos, setTab }) {
     const events = photos.filter(p => p.category === "COMPANY EVENT").length;
 
     return (
-        <div style={{ padding: 36 }}>
+        <div className="csk-page-padding"  style={{ padding: 36 }}>
             <div style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 24, fontWeight: 800, color: T.textPrimary, marginBottom: 6 }}>Welcome back 👋</h2>
                 <p style={{ fontSize: 14, color: T.textSecondary }}>Here's an overview of your CSK career portal content.</p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 16, marginBottom: 32 }}>
+            <div className="csk-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 16, marginBottom: 32 }}>
                 <StatCard icon="💼" label="Total Job Posts" value={jobs.length} accent="#4f6ef7" />
                 <StatCard icon="🎓" label="Fresher Roles" value={freshers} accent="#7c3aed" />
                 <StatCard icon="🖼️" label="Gallery Photos" value={photos.length} accent="#10b981" />
                 <StatCard icon="🏢" label="Company Events" value={events} accent="#f59e0b" />
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div  className="csk-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {/* Recent Jobs */}
                 <div style={{ background: T.cardBgSolid, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -418,7 +418,7 @@ function JobFormModal({ initial, onSave, onClose }) {
 
     return (
         <div style={{ position: "fixed", inset: 0, background: T.modalOverlay, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-            <div style={{ background: T.modalBg, border: `1px solid ${T.modalBorder}`, borderRadius: 18, padding: 32, width: 580, maxHeight: "92vh", overflowY: "auto", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+            <div className="csk-modal" style={{ background: T.modalBg, border: `1px solid ${T.modalBorder}`, borderRadius: 18, padding: 32, width: 580, maxHeight: "92vh", overflowY: "auto", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: T.textPrimary }}>{initial ? "✏️ Edit Job Post" : "➕ New Job Post"}</h3>
                     <button onClick={onClose} style={{ background: T.closeBtnBg, border: "none", color: T.closeBtnTx, width: 32, height: 32, borderRadius: 8, fontSize: 18, cursor: "pointer" }}>×</button>
@@ -535,7 +535,7 @@ function JobsManager({ jobs, setJobs }) {
     const badgeStyle = c => ({ background: c === "orange" ? T.badgeOrangeBg : c === "blue" ? T.badgeBlueBg : T.badgePurpleBg, color: c === "orange" ? T.badgeOrangeTx : c === "blue" ? T.badgeBlueTx : T.badgePurpleTx, fontSize: 10, fontWeight: 700, borderRadius: 20, padding: "2px 9px" });
 
     return (
-        <div style={{ padding: 36, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+        <div className="csk-page-padding"  style={{ padding: 36, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
                 <div>
                     <h2 style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary, marginBottom: 4 }}>Job Posts</h2>
@@ -548,7 +548,7 @@ function JobsManager({ jobs, setJobs }) {
                 ? <div style={{ textAlign: "center", padding: "80px 0" }}><div style={{ fontSize: 48, marginBottom: 14 }}>💼</div><p style={{ fontSize: 16, fontWeight: 600, color: T.emptyTx }}>No jobs posted yet</p><p style={{ fontSize: 13, marginTop: 6, color: T.textMuted }}>Click "Add Job Post" to create your first listing</p></div>
                 : <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                     {jobs.map(job => (
-                        <div key={job.id} style={{ background: T.cardBgSolid, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, display: "flex", alignItems: "flex-start", gap: 18 }}>
+                        <div  key={job.id} className="csk-job-card" style={{ background: T.cardBgSolid, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, display: "flex", alignItems: "flex-start", gap: 18 }}>
                             <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
                                     <span style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>{job.title}</span>
@@ -562,7 +562,7 @@ function JobsManager({ jobs, setJobs }) {
                                 </div>
                                 <p style={{ fontSize: 12, color: T.textSecondary, lineHeight: 1.6, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{job.skills}</p>
                             </div>
-                            <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                            <div className="csk-job-actions" style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                                 <button onClick={() => setEditItem(job)} style={{ padding: "7px 14px", background: T.editBg, color: T.editTx, border: `1px solid ${T.editBdr}`, borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 700, fontFamily: "inherit" }}>Edit</button>
                                 <button onClick={() => setDeleteId(job.id)} style={{ padding: "7px 14px", background: T.delBg, color: T.delTx, border: `1px solid ${T.delBdr}`, borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 700, fontFamily: "inherit" }}>Delete</button>
                             </div>
@@ -609,7 +609,7 @@ function PhotoFormModal({ initial, onSave, onClose }) {
 
     return (
         <div style={{ position: "fixed", inset: 0, background: T.modalOverlay, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-            <div style={{ background: T.modalBg, border: `1px solid ${T.modalBorder}`, borderRadius: 18, padding: 32, width: 520, maxHeight: "92vh", overflowY: "auto", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+            <div className="csk-form-grid" style={{ background: T.modalBg, border: `1px solid ${T.modalBorder}`, borderRadius: 18, padding: 32, width: 520, maxHeight: "92vh", overflowY: "auto", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: T.textPrimary }}>{initial ? "✏️ Edit Photo" : "📷 Upload Gallery Photo"}</h3>
                     <button onClick={onClose} style={{ background: T.closeBtnBg, border: "none", color: T.closeBtnTx, width: 32, height: 32, borderRadius: 8, fontSize: 18, cursor: "pointer" }}>×</button>
@@ -754,7 +754,7 @@ function GalleryManager({ photos, setPhotos }) {
     const catTx = { "COMPANY EVENT": T.catCompanyTx, "FESTIVAL CELEBRATION": T.catFestTx, CERTIFICATION: T.catCertTx };
 
     return (
-        <div style={{ padding: 36, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+        <div className="csk-page-padding" style={{ padding: 36, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
                 <div>
                     <h2 style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary, marginBottom: 4 }}>Gallery</h2>
@@ -805,7 +805,7 @@ function ApplicationsManager({
     const { T } = useT();
 
     return (
-        <div style={{ padding: 36 }}>
+        <div className="csk-page-padding" style={{ padding: 36 }}>
             <h2
                 style={{
                     color: T.textPrimary,
@@ -947,7 +947,7 @@ function ConfirmModal({ title, message, onConfirm, onCancel }) {
     const { T } = useT();
     return (
         <div style={{ position: "fixed", inset: 0, background: T.modalOverlay, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1100 }}>
-            <div style={{ background: T.modalBg, border: `1px solid ${T.delBdr}`, borderRadius: 16, padding: 32, width: 340, textAlign: "center", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+            <div  className="csk-modal-sm"  style={{ background: T.modalBg, border: `1px solid ${T.delBdr}`, borderRadius: 16, padding: 32, width: 340, textAlign: "center", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
                 <div style={{ fontSize: 40, marginBottom: 14 }}>🗑️</div>
                 <h3 style={{ color: T.textPrimary, marginBottom: 8, fontSize: 17, fontWeight: 700 }}>{title}</h3>
                 <p style={{ color: T.textSecondary, fontSize: 13, marginBottom: 24, lineHeight: 1.5 }}>{message}</p>
@@ -999,6 +999,7 @@ export default function AdminPanel() {
     const [jobs, setJobs] = useState([]);
     const [photos, setPhotos] = useState([]);
     const [isDark, setIsDark] = useState(true); // default: dark mode
+       const [sidebarOpen, setSidebarOpen] = useState(false);
     const [applications, setApplications] =
         useState([]);
 
@@ -1064,57 +1065,74 @@ export default function AdminPanel() {
     const toggleTheme = () => setIsDark(d => !d);
 
     return (
-        <ThemeCtx.Provider value={{ T, isDark, toggleTheme }}>
-            {!isAuthed
-                ? <LoginScreen onLogin={() => setIsAuthed(true)} />
-                : (
-                    <div style={{ display: "flex", minHeight: "100vh", background: T.pageBg, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
-                        <Sidebar
-                            activeTab={activeTab}
-                            setTab={setActiveTab}
-                            onLogout={() => setIsAuthed(false)}
-                            jobCount={jobs.length}
-                            photoCount={photos.length}
-                            applicationCount={applications.length}
+    <ThemeCtx.Provider value={{ T, isDark, toggleTheme }}>
+        {!isAuthed
+            ? <LoginScreen onLogin={() => setIsAuthed(true)} />
+            : (
+                <div style={{ display: "flex", minHeight: "100vh", background: T.pageBg, fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+
+                    {/* Mobile overlay - sidebar khula ho to background dim */}
+                    {sidebarOpen && (
+                        <div
+                            className="csk-sidebar-overlay"
+                            onClick={() => setSidebarOpen(false)}
                         />
-                        <div style={{ flex: 1, overflowY: "auto", minWidth: 0, display: "flex", flexDirection: "column" }}>
-                            {/* ── Top bar ── */}
-                            <div style={{ display: "flex", justifyContent: "flex-end", padding: "16px 36px 0", flexShrink: 0 }}>
-                                <button
-                                    onClick={toggleTheme}
-                                    style={{
-                                        display: "flex", alignItems: "center", gap: 8,
-                                        padding: "9px 18px",
-                                        background: T.toggleBg,
-                                        border: `1px solid ${T.toggleBdr}`,
-                                        borderRadius: 10,
-                                        color: T.toggleTx,
-                                        fontSize: 13, fontWeight: 700,
-                                        fontFamily: "'Segoe UI', system-ui, sans-serif",
-                                        cursor: "pointer",
-                                        transition: "all 0.2s",
-                                        letterSpacing: "0.01em",
-                                    }}
-                                >
-                                    {isDark ? "☀️  Light Mode" : "🌙  Dark Mode"}
-                                </button>
-                            </div>
-                            {activeTab === "dashboard" && <Dashboard jobs={jobs} photos={photos} setTab={setActiveTab} />}
-                            {activeTab === "jobs" && <JobsManager jobs={jobs} setJobs={setJobs} />}
-                            {activeTab === "gallery" && <GalleryManager photos={photos} setPhotos={setPhotos} />}
-                            {activeTab === "applications" && (
-                                <ApplicationsManager
+                    )}
 
-                                    applications={applications}
-                                    deleteApplication={deleteApplication}
+                    <Sidebar
+                        activeTab={activeTab}
+                        setTab={setActiveTab}
+                        onLogout={() => setIsAuthed(false)}
+                        jobCount={jobs.length}
+                        photoCount={photos.length}
+                        applicationCount={applications.length}
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                    />
 
-                                />
+                    <div style={{ flex: 1, overflowY: "auto", minWidth: 0, display: "flex", flexDirection: "column" }}>
 
-                            )}
+                        {/* ── Mobile top bar (hamburger menu) ── */}
+                        <div className="csk-mobile-topbar" style={{ display: "none", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${T.border}`, background: T.sidebarBg, position: "sticky", top: 0, zIndex: 50 }}>
+                            <button onClick={() => setSidebarOpen(true)} style={{ background: "transparent", border: "none", fontSize: 22, color: T.textPrimary, cursor: "pointer", padding: 4 }}>☰</button>
+                            <div style={{ fontWeight: 800, fontSize: 14, color: T.textPrimary }}>CSK Admin</div>
+                            <button onClick={toggleTheme} style={{ background: "transparent", border: "none", fontSize: 18, cursor: "pointer", color: T.toggleTx }}>
+                                {isDark ? "☀️" : "🌙"}
+                            </button>
                         </div>
+
+                        {/* ── Desktop top bar ── */}
+                        <div className="csk-desktop-topbar" style={{ display: "flex", justifyContent: "flex-end", padding: "16px 36px 0", flexShrink: 0 }}>
+                            <button
+                                onClick={toggleTheme}
+                                style={{
+                                    display: "flex", alignItems: "center", gap: 8,
+                                    padding: "9px 18px",
+                                    background: T.toggleBg,
+                                    border: `1px solid ${T.toggleBdr}`,
+                                    borderRadius: 10,
+                                    color: T.toggleTx,
+                                    fontSize: 13, fontWeight: 700,
+                                    fontFamily: "'Segoe UI', system-ui, sans-serif",
+                                    cursor: "pointer",
+                                    transition: "all 0.2s",
+                                    letterSpacing: "0.01em",
+                                }}
+                            >
+                                {isDark ? "☀️  Light Mode" : "🌙  Dark Mode"}
+                            </button>
+                        </div>
+
+                        {activeTab === "dashboard" && <Dashboard jobs={jobs} photos={photos} setTab={setActiveTab} />}
+                        {activeTab === "jobs" && <JobsManager jobs={jobs} setJobs={setJobs} />}
+                        {activeTab === "gallery" && <GalleryManager photos={photos} setPhotos={setPhotos} />}
+                        {activeTab === "applications" && (
+                            <ApplicationsManager applications={applications} deleteApplication={deleteApplication} />
+                        )}
                     </div>
-                )
-            }
-        </ThemeCtx.Provider>
-    );
+                </div>
+            )
+        }
+    </ThemeCtx.Provider>
+);
 }

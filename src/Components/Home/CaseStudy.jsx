@@ -83,6 +83,7 @@ export default function CaseStudy() {
 
                 // ── prevent long-press context menu on mobile
                 onContextMenu={(e) => e.preventDefault()}
+                
               >
 
                 {/* TOP LOGO */}

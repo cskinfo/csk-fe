@@ -83,25 +83,12 @@ import deptfertilizers from "../../assets/clients/deptfertilizers.png"
 import NIC from "../../assets/clients/NICELOGOS.png"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* PARTNERS */
 import acer from "../../assets/partners/acer.png";
 import juniper from "../../assets/partners/juniper.png";
 import panasonic from "../../assets/partners/panasonic.png";
 import peoplelink from "../../assets/partners/peoplelink.png";
-// import lenovo from "../../assets/partners/Lenovologo.png";
+
 /* ─── DATA ─── */
 const CATEGORIES = [
   { id: "all",        label: "All Partners",           icon: "fa-globe" },
@@ -112,707 +99,260 @@ const CATEGORIES = [
   { id: "networking", label: "Networking",              icon: null },
   { id: "enterprise", label: "Enterprise & Storage",   icon: null },
   { id: "license",    label: "License & Subscription", icon: null },
-  // { id: "audio",      label: "Audio Visual",           icon: null },
 ];
 
 const PARTNERS = [
   {
-     
     name: "Cisco",
     logo: cisco,
     category: "networking",
     color: "#1ba0d7",
-
     width: "95px",
     height: "32px",
-  
   },
-
-   {
-     
+  {
     name: "dynamicEngineers",
     logo: dynamicEngineers,
     category: "ourClient",
     color: "#ff7f50",
-
     width: "95px",
     height: "32px",
-  
   },
-
-   {
+  {
     name: "AWS",
     logo: aws,
     category: "cloud",
     color: "#ff9900",
-
     width: "60px",
     height: "40px",
   },
-
-   {
+  {
     name: "Microsoft",
     logo: microsoft,
     category: "cloud",
     color: "#00a4ef",
-
     width: "150px",
     height: "40px",
   },
-{
-     name: "Dell",
+  {
+    name: "Dell",
     logo: dell,
     category: "enterprise",
     color: "#007db8",
-
     width: "95px",
     height: "34px",
   },
-
-   {
+  {
     name: "Samsung",
     logo: samsung,
     category: "endpoint",
     color: "#1b1b1b",
-
     width: "90px",
     height: "25px",
   },
-
   {
     name: "NetApp",
     logo: netapp,
     category: "enterprise",
     color: "#009bde",
-
     width: "125px",
     height: "43px",
   },
-
-    {
+  {
     name: "Hitachi",
     logo: hitachi,
     category: ["networking","ourClient"],
     color: "#e31937",
-
     width: "110px",
     height: "40px",
   },
-
   {
     name: "Oracle",
     logo: oracle,
     category: "enterprise",
     color: "#f80000",
-
     width: "110px",
     height: "40px",
   },
-
-
   {
     name: "HCL",
     logo: hcl,
     category: ["networking","ourClient"],
     color: "#0000ff ",
-     width: "70px",
+    width: "70px",
     height: "20px",
-
   },
-
   {
     name: "savex",
     logo: savex,
     category: "ourClient",
     color: "#ff4500",
-     width: "70px",
+    width: "70px",
     height: "20px",
-
   },
-
-
   {
     name: "HP",
     logo: hp,
     category: "enterprise",
     color: "#0096d6",
-     width: "110px",
+    width: "110px",
     height: "40px",
   },
-
   {
     name: "Acer",
     logo: acer,
     category: "endpoint",
     color: "#83b81a",
-     width: "110px",
+    width: "110px",
     height: "40px",
   },
-
   {
     name: "AU",
     logo: AU,
     category: ["networking","ourClient"],
     color: "#ff8c00",
-     width: "110px",
+    width: "110px",
     height: "40px",
   },
-
   {
     name: "Lenovo",
     logo: Lenovo,
     category: "enterprise",
     color: "#ff0000",
-     width: "110px",
+    width: "110px",
     height: "40px",
   },
-
-   {
+  {
     name: "Trend Micro ",
     logo: trendmicrologo,
     category: "enterprise",
     color: "#ff0000",
-     width: "300px",
+    width: "300px",
     height: "400px",
   },
-
   {
     name: "SUSE",
     logo: suse,
     category: "enterprise",
     color: "#30ba78",
-     width: "110px",
+    width: "110px",
     height: "35px",
   },
-
   {
     name: "WelcomHotel",
     logo: welcomhotel,
     category: "enterprise",
     color: "#d4af37",
-     width: "250px",
+    width: "250px",
     height: "89px",
   },
-
   {
     name: "Fortinet",
     logo: Fortinet,
     category: "enterprise",
     color: "#8b0000",
-     width: "140px",
+    width: "140px",
     height: "100px",
   },
-
   {
     name: "PeopleLinkLogo",
     logo: PeopleLinkLogo,
     category: "enterprise",
     color: "#0077c8",
-     width: "250px",
+    width: "250px",
     height: "150px",
   },
-
   {
     name: "panasoniclogo",
     logo: panasoniclogo,
     category: "enterprise",
     color: "#004080",
-     width: "200px",
+    width: "200px",
     height: "100px",
   },
-
   {
     name: "juniperr",
     logo: juniperr,
     category: "enterprise",
     color: "#000000 ",
-     width: "80px",
+    width: "80px",
     height: "30px",
   },
-
   {
     name: "barracuda",
     logo: barracuda,
     category: "enterprise",
     color: "#1f5aa6",
-     width: "110px",
+    width: "110px",
     height: "50px",
   },
-
-   {
+  {
     name: "commvault",
     logo: commvault,
     category: "enterprise",
     color: "#800080",
-     width: "110px",
+    width: "110px",
     height: "20px",
   },
-
-  
-
- 
-
 ]; 
 
 const OUR_CLIENTS = [
-
-  {
-    name: "Hitachi",
-    logo: hitachi,
-    color: "#cc0000",
-
-    width: "120px",
-    height: "40px",
-  },
-
-  {
-    name: "Dell",
-    logo: dell,
-    color: "#0000ff",
-
-    width: "150px",
-    height: "48px",
-  },
-
-  {
-    name: "Savex",
-    logo: savex,
-    color: "#ffa500",
-
-    width: "65px",
-    height: "35px",
-  },
-
-   {
-    name: "HCL",
-    logo: hcl,
-    color: "#0000cd",
-
-    width: "75px",
-    height: "30px",
-  },
-
-  {
-    name: "Team Computer",
-    logo: teamcomputer,
-    color: "#eee600",
-
-    width: "150px",
-    height: "80px",
-  },
-
-  {
-    name: "dynamicEngineers",
-    logo: dynamicEngineers,
-    color: "#ff4500 ",
-
-    width: "120px",
-    height: "40px",
-  },
-  
-   {
-    name: "Ceigallremovebgpreview",
-    logo: ceigallremovebgpreview,
-    color: "#1#ffa500 ",
-
-    width: "115px",
-    height: "44px",
-  },
-
-  {
-    name: "accel",
-    logo: accel,
-    color: "#00008b ",
-
-    width: "180px",
-    height: "60px",
-  },
-
-  {
-    name: "sysmacsolutionlogo",
-    logo: sysmacsolutionlogo,
-    color: "#0000cd ",
-
-    width: "100px",
-    height: "40px",
-  },
-
-  {
-    name: "sy",
-    logo: sy,
-    color: "#0000cd ",
-
-    width: "120px",
-    height: "36px",
-  },
-
-  {
-    name: "logo",
-    logo: logo,
-    color: "#000036",
-
-    width: "110px",
-    height: "50px",
-  },
-
-  {
-    name: "tilid",
-    logo: tilid,
-    color: "#ff4500 ",
-
-    width: "95px",
-    height: "34px",
-  },
-
-  {
-    name: "lubrikote",
-    logo: lubrikote,
-    color: "#6a5acd",
-
-    width: "110px",
-    height: "40px",
-  },
-
-  {
-    name: "Pnb",
-    logo: Pnb,
-    color: "#ff9800",
-
-    width: "90px",
-    height: "90px",
-  },
-
-   {
-    name: "AU",
-    logo: AU,
-    color: "#ff9800",
-
-    width: "90px",
-    height: "40px",
-  },
-
-   {
-    name: "ifci",
-    logo: ifci,
-    color: "#0000ff",
-
-    width: "90px",
-    height: "90px",
-  },
-
-   {
-    name: "utkarsh",
-    logo: utkarsh,
-    color: "#663399",
-
-    width: "150px",
-    height: "150px",
-  },
-
-     {
-    name: "csll",
-    logo: csll,
-    color: "#8b0000 ",
-
-    width: "150px",
-    height: "150px",
-  },
-
-
-  //  {
-  //   name: "pgbremovebgpreview",
-  //   logo: pgbremovebgpreview,
-  //   color: "#ff9800",
-
-  //   width: "120px",
-  //   height: "120px",
-  // },
-
-   {
-    name: "hyphen",
-    logo: hyphen,
-    color: "#8b0000 ",
-
-    width: "90px",
-    height: "90px",
-    
-  },
-   
-   {
-    name: "welcomhotel",
-    logo: welcomhotel,
-    color: "#ff9800",
-
-    width: "250px",
-    height: "90px",
-  },
-
-    {
-    name: "parkinn",
-    logo: parkinn,
-    color: "#00008b",
-
-    width: "80px",
-    height: "90px",
-  },
-
-
-    {
-    name: "alila",
-    logo: alila,
-    color: "#242124",
-
-    width: "80px",
-    height: "80px",
-  },
-
-    {
-    name: "ibis",
-    logo: ibis,
-    color: "#800000",
-
-    width: "80px",
-    height: "60px",
-  },
-
-    {
-    name: "novo",
-    logo: novo,
-    color: "#002147",
-
-    width: "90px",
-    height: "80px",
-  },
-
-   {
-    name: "abes",
-    logo: abes,
-    color: "#002147",
-
-    width: "90px",
-    height: "80px",
-  },
-
- 
-
-    {
-    name: "IITMANDILOGO",
-    logo: IITMANDILOGO,
-    color: "#ffa500",
-
-    width: "80px",
-    height: "80px",
-  },
-
-    {
-    name: "INDRAPRASTHA",
-    logo: INDRAPRASTHA,
-    color: "#00ced1",
-
-    width: "70px",
-    height: "70px",
-  },
-
-
-
- {
-    name: "GKUlogo",
-    logo: GKUlogo,
-    color: "#002147",
-
-    width: "60px",
-    height: "60px",
-  },
-
- {
-    name: "army",
-    logo: army,
-    color: "#002147",
-
-    width: "50px",
-    height: "50px",
-  },
-
-   {
-    name: "Teerthankar",
-    logo: Teerthankar,
-    color: "#ff8c00",
-
-    width: "70px",
-    height: "70px",
-  },
-
-   {
-    name: "KR",
-    logo: KR,
-    color: "#00b7eb",
-
-    width: "50px",
-    height: "50px",
-  },
-
-
+  { name: "Hitachi", logo: hitachi, color: "#cc0000", width: "120px", height: "40px" },
+  { name: "Dell", logo: dell, color: "#0000ff", width: "150px", height: "48px" },
+  { name: "Savex", logo: savex, color: "#ffa500", width: "65px", height: "35px" },
+  { name: "HCL", logo: hcl, color: "#0000cd", width: "75px", height: "30px" },
+  { name: "Team Computer", logo: teamcomputer, color: "#eee600", width: "150px", height: "80px" },
+  { name: "dynamicEngineers", logo: dynamicEngineers, color: "#ff4500 ", width: "120px", height: "40px" },
+  { name: "Ceigallremovebgpreview", logo: ceigallremovebgpreview, color: "#1#ffa500 ", width: "115px", height: "44px" },
+  { name: "accel", logo: accel, color: "#00008b ", width: "180px", height: "60px" },
+  { name: "sysmacsolutionlogo", logo: sysmacsolutionlogo, color: "#0000cd ", width: "100px", height: "40px" },
+  { name: "sy", logo: sy, color: "#0000cd ", width: "120px", height: "36px" },
+  { name: "logo", logo: logo, color: "#000036", width: "110px", height: "50px" },
+  { name: "tilid", logo: tilid, color: "#ff4500 ", width: "95px", height: "34px" },
+  { name: "lubrikote", logo: lubrikote, color: "#6a5acd", width: "110px", height: "40px" },
+  { name: "Pnb", logo: Pnb, color: "#ff9800", width: "90px", height: "90px" },
+  { name: "AU", logo: AU, color: "#ff9800", width: "90px", height: "40px" },
+  { name: "ifci", logo: ifci, color: "#0000ff", width: "90px", height: "90px" },
+  { name: "utkarsh", logo: utkarsh, color: "#663399", width: "150px", height: "150px" },
+  { name: "csll", logo: csll, color: "#8b0000 ", width: "150px", height: "150px" },
+  { name: "hyphen", logo: hyphen, color: "#8b0000 ", width: "90px", height: "90px" },
+  { name: "welcomhotel", logo: welcomhotel, color: "#ff9800", width: "250px", height: "90px" },
+  { name: "parkinn", logo: parkinn, color: "#00008b", width: "80px", height: "90px" },
+  { name: "alila", logo: alila, color: "#242124", width: "80px", height: "80px" },
+  { name: "ibis", logo: ibis, color: "#800000", width: "80px", height: "60px" },
+  { name: "novo", logo: novo, color: "#002147", width: "90px", height: "80px" },
+  { name: "abes", logo: abes, color: "#002147", width: "90px", height: "80px" },
+  { name: "IITMANDILOGO", logo: IITMANDILOGO, color: "#ffa500", width: "80px", height: "80px" },
+  { name: "INDRAPRASTHA", logo: INDRAPRASTHA, color: "#00ced1", width: "70px", height: "70px" },
+  { name: "GKUlogo", logo: GKUlogo, color: "#002147", width: "60px", height: "60px" },
+  { name: "army", logo: army, color: "#002147", width: "50px", height: "50px" },
+  { name: "Teerthankar", logo: Teerthankar, color: "#ff8c00", width: "70px", height: "70px" },
+  { name: "KR", logo: KR, color: "#00b7eb", width: "50px", height: "50px" },
 ];
 
 const GOVERNMENT_CLIENTS = [
-  {
-    name: "NHPC",
-    logo: NHPC,
-    color: "#0047ab",
-
-    width: "140px",
-    height: "80px",
-  },
-
-  
-  {
-    name: "food",
-    logo: NIC,
-    color: "#0047ab",
-
-    width: "350px",
-    height: "250px",
-  },
-
-  {
-    name: "ESIANDPF",
-    logo: ESIANDPF,
-    color: "#ff0000 ",
-
-    width: "140px",
-    height: "60px",
-  },
-
-   {
-    name: " Bharat",
-    logo:  Bharat,
-    color: "#0047ab",
-
-    width: "140px",
-    height: "60px",
-  },
-
-  {
-    name: "Bharat Petroleum",
-    logo: bharatpetroleum,
-    color: "#ffff00",
-
-    width: "120px",
-    height: "50px",
-  },
-
-  
-  {
-    name: "IIT Mandi",
-    logo: IITMANDILOGO,
-    color: "#ffa500",
-
-    width: "80px",
-    height: "85px",
-  },
- 
-  
- 
-
-  {
-    name: "Habitat",
-    logo: Habitat,
-    color: "#003366",
-
-    width: "95px",
-    height: "65px",
-  },
- 
-
-  {
-    name: "INDRAPRASTHA",
-    logo: INDRAPRASTHA,
-    color: "#00ced1",
-
-    width: "100px",
-    height: "80px",
-  },
-
-   {
-    name: " jvvnl",
-    logo:  jvvnl,
-    color: "#00ced1",
-
-    width: "100px",
-    height: "60px",
-  },
-  {
-    name: " deptfertilizers",
-    logo:  deptfertilizers,
-    color: "#002147",
-
-    width: "100px",
-    height: "80px",
-  },
-
-   {
-    name: "IFCI",
-    logo: ifci,
-    color: "#004080",
-
-    width: "110px",
-    height: "90px",
-  },
-  
- 
-
-  {
-    name: "Army",
-    logo: army,
-    color: "#00008b",
-
-    width: "70px",
-    height: "50px",
-  },
-
- 
-   {
-    name: "food",
-    logo: food,
-    color: "#32cd32",
-
-    width: "100px",
-    height: "60px",
-  },
-
-  {
-    name: "PNB",
-    logo: Pnb,
-    color: "#fff600",
-
-    width: "100px",
-    height: "90px",
-  },
-
-  {
-    name: "CSLL",
-    logo: csll,
-    color: "#ff0000",
-
-    width: "120px",
-    height: "100px",
-  },
-
-  {
-    name: "GKU",
-    logo: GKUlogo,
-    color: "#002147",
-
-    width: "80px",
-    height: "60px",
-  },
-
+  { name: "NHPC", logo: NHPC, color: "#0047ab", width: "140px", height: "80px" },
+  { name: "food", logo: NIC, color: "#0047ab", width: "350px", height: "250px" },
+  { name: "ESIANDPF", logo: ESIANDPF, color: "#ff0000 ", width: "140px", height: "60px" },
+  { name: " Bharat", logo: Bharat, color: "#0047ab", width: "140px", height: "60px" },
+  { name: "Bharat Petroleum", logo: bharatpetroleum, color: "#ffff00", width: "120px", height: "50px" },
+  { name: "IIT Mandi", logo: IITMANDILOGO, color: "#ffa500", width: "80px", height: "85px" },
+  { name: "Habitat", logo: Habitat, color: "#003366", width: "95px", height: "65px" },
+  { name: "INDRAPRASTHA", logo: INDRAPRASTHA, color: "#00ced1", width: "100px", height: "80px" },
+  { name: " jvvnl", logo: jvvnl, color: "#00ced1", width: "100px", height: "60px" },
+  { name: " deptfertilizers", logo: deptfertilizers, color: "#002147", width: "100px", height: "80px" },
+  { name: "IFCI", logo: ifci, color: "#004080", width: "110px", height: "90px" },
+  { name: "Army", logo: army, color: "#00008b", width: "70px", height: "50px" },
+  { name: "food", logo: food, color: "#32cd32", width: "100px", height: "60px" },
+  { name: "PNB", logo: Pnb, color: "#fff600", width: "100px", height: "90px" },
+  { name: "CSLL", logo: csll, color: "#ff0000", width: "120px", height: "100px" },
+  { name: "GKU", logo: GKUlogo, color: "#002147", width: "80px", height: "60px" },
 ];
 
 
 /* ─── UTILS ─── */
 function hexToRgb(hex) {
-  const h = hex.replace("#", "");
+  const h = hex.replace("#", "").trim();
   return `${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)}`;
 }
 
@@ -863,6 +403,8 @@ function showToast(name, cat) {
     z-index:9000;
     transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
     pointer-events:none; white-space:nowrap;
+    max-width: 90vw;
+    text-align: center;
   `;
   t.innerHTML = `<span style="color:rgba(255,255,255,0.4);margin-right:8px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase">${cat}</span><strong>${name}</strong>`;
   document.body.appendChild(t);
@@ -875,7 +417,7 @@ function showToast(name, cat) {
 }
 
 /* ─── LOGO CARD ─── */
-function PartnerCard({ partner, index }) {
+function PartnerCard({ partner, index, isMobile }) {
   const outerRef = useRef(null);
   const faceRef  = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -886,24 +428,27 @@ function PartnerCard({ partner, index }) {
   }, [index]);
 
   const handleMouseMove = useCallback((e) => {
+    if (isMobile) return;
     const r  = outerRef.current.getBoundingClientRect();
     const dx = (e.clientX - r.left  - r.width  / 2) / (r.width  / 2);
     const dy = (e.clientY - r.top   - r.height / 2) / (r.height / 2);
     outerRef.current.style.transform = `translateY(-5px) scale(1.05) rotateX(${-dy * 13}deg) rotateY(${dx * 13}deg)`;
-  }, []);
+  }, [isMobile]);
 
   const handleMouseLeave = useCallback(() => {
+    if (isMobile) return;
     const el = outerRef.current;
     el.style.transition = "transform 0.6s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease";
     el.style.transform  = "translateY(0) scale(1) rotateX(0) rotateY(0)";
     el.style.boxShadow  = "";
     setTimeout(() => { if (el) el.style.transition = ""; }, 600);
-  }, []);
+  }, [isMobile]);
 
   const handleMouseEnter = useCallback(() => {
+    if (isMobile) return;
     const rgb = hexToRgb(partner.color);
     outerRef.current.style.boxShadow = `0 0 0 1.5px rgba(${rgb},0.35), 0 8px 28px rgba(${rgb},0.18), 0 20px 40px rgba(${rgb},0.08), 0 4px 8px rgba(30,50,120,0.08)`;
-  }, [partner.color]);
+  }, [partner.color, isMobile]);
 
   const handleClick = useCallback((e) => {
     const r   = faceRef.current.getBoundingClientRect();
@@ -940,7 +485,7 @@ function PartnerCard({ partner, index }) {
         borderRadius: "16px",
         padding: "1.2px",
         background: "transparent",
-        height: "92px",
+        height: isMobile ? "76px" : "92px",
         transformStyle: "preserve-3d",
         transition: "transform 0.12s ease",
         opacity:   visible ? 1 : 0,
@@ -975,7 +520,7 @@ function PartnerCard({ partner, index }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "12px",
+          padding: isMobile ? "8px" : "12px",
           overflow: "hidden",
           boxShadow: "0 1px 3px rgba(30,50,120,0.06), 0 1px 0 rgba(255,255,255,0.9) inset",
         }}
@@ -989,7 +534,7 @@ function PartnerCard({ partner, index }) {
           pointerEvents: "none",
         }} className="card-glow" />
 
-        {/* Name */}
+        {/* Logo or Name */}
         <div
           className="card-name"
           style={{
@@ -1006,46 +551,40 @@ function PartnerCard({ partner, index }) {
           }}
         >
           {partner.logo ? (
-
- <img
-  src={partner.logo}
-  alt={partner.name}
-  style={{
-    width: partner.width || "90px",
-    height: partner.height || "36px",
-
-    objectFit: "contain",
-
-    position: "relative",
-    zIndex: 2,
-
-    filter: "brightness(1)",
-
-    transition: "all 0.3s ease",
-  }}
-/>
-
-) : (
-
-  <div
-    className="card-name"
-    style={{
-      fontFamily: "'Syne', sans-serif",
-      fontSize: "12.5px",
-      fontWeight: 700,
-      letterSpacing: "-0.01em",
-      textAlign: "center",
-      lineHeight: 1.35,
-      position: "relative",
-      zIndex: 2,
-      userSelect: "none",
-      color: partner.color,
-    }}
-  >
-    {partner.name}
-  </div>
-
-)}
+            <img
+              src={partner.logo}
+              alt={partner.name}
+              style={{
+                width: partner.width || "90px",
+                height: partner.height || "36px",
+                maxWidth: "100%",
+                maxHeight: isMobile ? "48px" : "60px",
+                objectFit: "contain",
+                position: "relative",
+                zIndex: 2,
+                filter: "brightness(1)",
+                transition: "all 0.3s ease",
+              }}
+            />
+          ) : (
+            <div
+              className="card-name"
+              style={{
+                fontFamily: "'Syne', sans-serif",
+                fontSize: "12.5px",
+                fontWeight: 700,
+                letterSpacing: "-0.01em",
+                textAlign: "center",
+                lineHeight: 1.35,
+                position: "relative",
+                zIndex: 2,
+                userSelect: "none",
+                color: partner.color,
+              }}
+            >
+              {partner.name}
+            </div>
+          )}
         </div>
 
         {/* Category label */}
@@ -1076,54 +615,42 @@ export default function TrustedAlliances() {
   const [active, setActive]   = useState("all");
   const [list, setList]       = useState(PARTNERS);
   const [gridKey, setGridKey] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
- function filterPartners(id) {
+  useEffect(() => {
+    function handleResize() {
+      const w = window.innerWidth;
+      setIsMobile(w < 480);
+      setIsTablet(w >= 480 && w < 1024);
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  setActive(id);
-
-  // OUR CLIENTS
-  if (id === "ourClient") {
-
-    setList(OUR_CLIENTS);
-
+  function filterPartners(id) {
+    setActive(id);
+    if (id === "ourClient") {
+      setList(OUR_CLIENTS);
+    } else if (id === "all") {
+      setList(PARTNERS);
+    } else if (id === "Government") {
+      setList(GOVERNMENT_CLIENTS);
+    } else {
+      setList(
+        PARTNERS.filter((p) => {
+          if (Array.isArray(p.category)) return p.category.includes(id);
+          return p.category === id;
+        })
+      );
+    }
+    setGridKey((k) => k + 1);
   }
 
-  // ALL PARTNERS
-  else if (id === "all") {
-
-    setList(PARTNERS);
-
-
-  }
-  else if ( id=="Government"){
-     setList(GOVERNMENT_CLIENTS);
-  }
-
-  // OTHER FILTERS
-  else {
-
-    setList(
-
-      PARTNERS.filter((p) => {
-
-        if (Array.isArray(p.category)) {
-
-          return p.category.includes(id);
-
-        }
-
-        return p.category === id;
-      })
-
-    );
-
-  }
-
-  setGridKey((k) => k + 1);
-}
   return (
     <>
-      {/* Global styles injected once */}
+      {/* Global styles */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
@@ -1241,15 +768,6 @@ export default function TrustedAlliances() {
           animation:title-shine 6s ease infinite;
         }
 
-        /* Scan line */
-        .scan-line {
-          position:absolute;
-          left:0; right:0; height:2px;
-          background:linear-gradient(90deg,transparent,rgba(59,108,240,0.22),transparent);
-          animation:scan-drift 8s linear infinite;
-          pointer-events:none; z-index:2;
-        }
-
         /* Orbs */
         .orb { position:absolute; border-radius:50%; filter:blur(90px); animation:orb-drift 20s ease-in-out infinite alternate; }
 
@@ -1261,9 +779,100 @@ export default function TrustedAlliances() {
           background:linear-gradient(90deg,transparent,rgba(59,108,240,0.35),transparent);
         }
 
-        @media (max-width:600px) {
-          .logo-grid { grid-template-columns:repeat(auto-fill,minmax(105px,1fr)) !important; gap:8px !important; }
-          .main-section { padding:36px 16px 60px !important; }
+        /* ── RESPONSIVE ── */
+
+        /* Tablet: 480px – 1023px */
+        @media (max-width: 1023px) {
+          .main-section {
+            padding: 40px 20px 64px !important;
+          }
+          .logo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)) !important;
+            gap: 10px !important;
+          }
+          .grid-shell {
+            padding: 18px !important;
+            border-radius: 22px !important;
+          }
+          .filter-scroll-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+          }
+          .filter-scroll-wrap::-webkit-scrollbar { display: none; }
+          .filter-inner {
+            flex-wrap: nowrap !important;
+            min-width: max-content;
+          }
+          .filter-count {
+            display: none !important;
+          }
+          .partner-count-mobile {
+            display: flex !important;
+          }
+        }
+
+        /* Mobile: up to 479px */
+        @media (max-width: 479px) {
+          .main-section {
+            padding: 28px 12px 52px !important;
+          }
+          .logo-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
+          }
+          .grid-shell {
+            padding: 12px !important;
+            border-radius: 18px !important;
+          }
+          .header-section {
+            margin-bottom: 32px !important;
+          }
+          .footer-bar {
+            font-size: 11px !important;
+            padding: 7px 14px !important;
+          }
+          .filter-btn {
+            padding: 7px 13px !important;
+            font-size: 12px !important;
+          }
+        }
+
+        /* Tiny phones: up to 359px */
+        @media (max-width: 359px) {
+          .logo-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+
+        /* Touch: show category on mobile */
+        @media (hover: none) {
+          .card-cat {
+            opacity: 0 !important;
+          }
+          .card-outer:active .card-ring {
+            opacity: 1;
+            animation-play-state: running;
+          }
+          .card-outer:active .card-glow { opacity: 1; }
+        }
+
+        .partner-count-mobile {
+          display: none;
+          align-items: center;
+          gap: 6px;
+          font-family: 'Syne', sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          color: rgba(17,24,39,0.46);
+          padding: 4px 12px;
+          border: 1px solid rgba(30,50,120,0.09);
+          border-radius: 100px;
+          background: rgba(255,255,255,0.7);
+          box-shadow: 0 1px 3px rgba(30,50,120,0.06);
+          white-space: nowrap;
+          flex-shrink: 0;
         }
       `}</style>
 
@@ -1279,19 +888,14 @@ export default function TrustedAlliances() {
 
         {/* ── BACKGROUND CANVAS ── */}
         <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
-          {/* Base gradient */}
           <div style={{
             position: "absolute", inset: 0,
             background: "linear-gradient(160deg, #e8eeff 0%, #f3f0ff 40%, #eaf5ff 100%)",
           }} />
-
-          {/* Orbs */}
           <div className="orb" style={{ width:640,height:640,top:-200,left:-160,background:"radial-gradient(circle,rgba(100,140,255,0.22) 0%,transparent 70%)",animationDuration:"22s" }} />
           <div className="orb" style={{ width:520,height:520,bottom:-160,right:-120,background:"radial-gradient(circle,rgba(140,100,240,0.18) 0%,transparent 70%)",animationDuration:"18s",animationDelay:"-7s" }} />
           <div className="orb" style={{ width:320,height:320,top:"38%",left:"52%",background:"radial-gradient(circle,rgba(60,180,255,0.14) 0%,transparent 70%)",animationDuration:"15s",animationDelay:"-4s" }} />
           <div className="orb" style={{ width:260,height:260,top:"20%",right:"15%",background:"radial-gradient(circle,rgba(255,180,80,0.1) 0%,transparent 70%)",animationDuration:"25s",animationDelay:"-10s" }} />
-
-          {/* Dot grid */}
           <div style={{
             position: "absolute", inset: 0,
             backgroundImage: "radial-gradient(rgba(30,50,120,0.1) 1px, transparent 1px)",
@@ -1299,9 +903,6 @@ export default function TrustedAlliances() {
             maskImage: "radial-gradient(ellipse 100% 100% at 50% 0%, black 30%, transparent 80%)",
             WebkitMaskImage: "radial-gradient(ellipse 100% 100% at 50% 0%, black 30%, transparent 80%)",
           }} />
-
-          {/* Scan line */}
-          {/* <div className="scan-line" /> */}
         </div>
 
         {/* ── MAIN ── */}
@@ -1312,7 +913,7 @@ export default function TrustedAlliances() {
         }}>
 
           {/* ── HEADER ── */}
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <div className="header-section" style={{ textAlign: "center", marginBottom: 56 }}>
             {/* Eyebrow */}
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
@@ -1332,7 +933,7 @@ export default function TrustedAlliances() {
             {/* Title */}
             <h1 style={{
               fontFamily: "'Syne', sans-serif", fontWeight: 800,
-              fontSize: "clamp(38px,5.5vw,48px)", letterSpacing: "0.2em", lineHeight: 1.2,
+              fontSize: "clamp(28px,5.5vw,48px)", letterSpacing: "0.2em", lineHeight: 1.2,
               animation: "fade-up 0.7s 0.08s cubic-bezier(0.16,1,0.3,1) both",
               margin: 0,
             }}>
@@ -1350,52 +951,75 @@ export default function TrustedAlliances() {
           </div>
 
           {/* ── FILTER ROW ── */}
-          <div style={{ display:"flex", alignItems:"flex-start", gap:8, flexWrap:"wrap", marginBottom:28 }}>
-            {/* Filter buttons */}
-            <div style={{ display:"flex", flexWrap:"wrap", gap:8, animation:"fade-up 0.7s 0.22s cubic-bezier(0.16,1,0.3,1) both" }}>
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat.id}
-                  className="filter-btn"
-                  onClick={() => filterPartners(cat.id)}
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: 6,
-                    padding: "8px 18px", borderRadius: 100,
-                    fontSize: 13, fontWeight: 500,
-                    fontFamily: "'DM Sans', sans-serif",
-                    cursor: "pointer",
-                    border: cat.id === active ? "1px solid transparent" : "1px solid rgba(30,50,120,0.09)",
-                    background: cat.id === active ? "#3b6cf0" : "rgba(255,255,255,0.7)",
-                    color: cat.id === active ? "#fff" : "rgba(17,24,39,0.46)",
-                    transition: "all 0.2s ease",
-                    backdropFilter: "blur(12px)",
-                    position: "relative", overflow: "hidden",
-                    boxShadow: cat.id === active
-                      ? "0 0 20px rgba(59,108,240,0.4), 0 4px 12px rgba(59,108,240,0.25)"
-                      : "0 1px 3px rgba(30,50,120,0.06)",
-                    outline: "none",
-                  }}
-                >
-                  {cat.icon && <i className={`fas ${cat.icon}`} style={{ fontSize: 11, opacity: 0.8 }} />}
-                  {cat.label}
-                </button>
-              ))}
+          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:28 }}>
+
+            {/* Scrollable filter strip on tablet/mobile */}
+            <div className="filter-scroll-wrap" style={{ flex: 1, minWidth: 0 }}>
+              <div
+                className="filter-inner"
+                style={{
+                  display:"flex",
+                  flexWrap:"wrap",
+                  gap:8,
+                  animation:"fade-up 0.7s 0.22s cubic-bezier(0.16,1,0.3,1) both"
+                }}
+              >
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat.id}
+                    className="filter-btn"
+                    onClick={() => filterPartners(cat.id)}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: 6,
+                      padding: "8px 18px", borderRadius: 100,
+                      fontSize: 13, fontWeight: 500,
+                      fontFamily: "'DM Sans', sans-serif",
+                      cursor: "pointer",
+                      border: cat.id === active ? "1px solid transparent" : "1px solid rgba(30,50,120,0.09)",
+                      background: cat.id === active ? "#3b6cf0" : "rgba(255,255,255,0.7)",
+                      color: cat.id === active ? "#fff" : "rgba(17,24,39,0.46)",
+                      transition: "all 0.2s ease",
+                      backdropFilter: "blur(12px)",
+                      position: "relative", overflow: "hidden",
+                      boxShadow: cat.id === active
+                        ? "0 0 20px rgba(59,108,240,0.4), 0 4px 12px rgba(59,108,240,0.25)"
+                        : "0 1px 3px rgba(30,50,120,0.06)",
+                      outline: "none",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {cat.icon && <i className={`fas ${cat.icon}`} style={{ fontSize: 11, opacity: 0.8 }} />}
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Partner count */}
-            <div style={{
-              fontFamily: "'Syne', sans-serif", fontSize: 12, fontWeight: 600,
-              color: "rgba(17,24,39,0.46)",
-              marginLeft: "auto", alignSelf: "center",
-              padding: "4px 12px",
-              border: "1px solid rgba(30,50,120,0.09)",
-              borderRadius: 100,
-              background: "rgba(255,255,255,0.7)",
-              animation: "fade-up 0.7s 0.22s cubic-bezier(0.16,1,0.3,1) both",
-              boxShadow: "0 1px 3px rgba(30,50,120,0.06)",
-            }}>
+            {/* Partner count — desktop (hidden on tablet/mobile via CSS) */}
+            <div
+              className="filter-count"
+              style={{
+                fontFamily: "'Syne', sans-serif", fontSize: 12, fontWeight: 600,
+                color: "rgba(17,24,39,0.46)",
+                flexShrink: 0,
+                padding: "4px 12px",
+                border: "1px solid rgba(30,50,120,0.09)",
+                borderRadius: 100,
+                background: "rgba(255,255,255,0.7)",
+                animation: "fade-up 0.7s 0.22s cubic-bezier(0.16,1,0.3,1) both",
+                boxShadow: "0 1px 3px rgba(30,50,120,0.06)",
+                whiteSpace: "nowrap",
+              }}
+            >
               {list.length} Partner{list.length !== 1 ? "s" : ""}
             </div>
+
+            {/* Partner count — mobile (shown via CSS) */}
+            <div className="partner-count-mobile">
+              {list.length}
+            </div>
+
           </div>
 
           {/* ── GRID SHELL ── */}
@@ -1415,7 +1039,12 @@ export default function TrustedAlliances() {
               gap: 11,
             }}>
               {list.map((partner, i) => (
-                <PartnerCard key={`${partner.name}-${gridKey}`} partner={partner} index={i} />
+                <PartnerCard
+                  key={`${partner.name}-${gridKey}`}
+                  partner={partner}
+                  index={i}
+                  isMobile={isMobile}
+                />
               ))}
             </div>
           </div>
@@ -1425,7 +1054,7 @@ export default function TrustedAlliances() {
             display: "flex", justifyContent: "center", marginTop: 28,
             animation: "fade-up 0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both",
           }}>
-            <div style={{
+            <div className="footer-bar" style={{
               display: "inline-flex", alignItems: "center", gap: 9,
               fontSize: 12, color: "rgba(17,24,39,0.46)",
               padding: "8px 20px", borderRadius: 100,

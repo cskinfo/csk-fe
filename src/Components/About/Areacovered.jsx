@@ -1,5 +1,4 @@
 import React from "react";
-
 import indiaMap from "../../assets/AboutPagePhoto/indiaMap.png";
 
 const locations = [
@@ -52,97 +51,104 @@ const locations = [
 
 export default function AreaCovered() {
   return (
-    <section
-      style={{
-        background: "#cfe3f5",
-        padding: "80px 24px",
-      }}
-    >
-      <h2
-        style={{
-          textAlign: "center",
-          fontSize: "clamp(1.8rem, 3vw, 2.4rem)",
-          fontWeight: 700,
-          marginBottom: "60px",
-          color: "#0f2844",
-        }}
-      >
-        Area Covered
-      </h2>
+    <>
+      <style>{`
+        .area-section {
+          background: #cfe3f5;
+          padding: 80px 24px;
+        }
 
-      <div
-        style={{
-          maxWidth: "1300px",
-          margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "1.5fr 1fr",
-          gap: "60px",
-          alignItems: "center",
-        }}
-      >
-        {/* LEFT SIDE MAP */}
-        <div
+        /* Main two-column layout */
+        .area-inner {
+          max-width: 1300px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1.5fr 1fr;
+          gap: 60px;
+          align-items: center;
+        }
+
+        /* Location cards: 2 columns on desktop */
+        .area-cards {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+        }
+
+        /* Tablet: stack map above cards, full width */
+        @media (max-width: 900px) {
+          .area-inner {
+            grid-template-columns: 1fr;
+            gap: 40px;
+          }
+          .area-map img {
+            max-width: 500px !important;
+          }
+        }
+
+        /* Mobile: single column cards */
+        @media (max-width: 540px) {
+          .area-section { padding: 56px 16px; }
+          .area-cards {
+            grid-template-columns: 1fr;
+          }
+          .area-map img {
+            max-width: 320px !important;
+          }
+        }
+      `}</style>
+
+      <section className="area-section">
+        <h2
           style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            textAlign: "center",
+            fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
+            fontWeight: 700,
+            marginBottom: "56px",
+            color: "#0f2844",
           }}
         >
-          <img
-            src={indiaMap}
-            alt="India map showing CSK locations"
-            style={{
-              width: "100%",
-              maxWidth: "750px",
-              height: "auto",
-              objectFit: "contain",
-            }}
-          />
-        </div>
+          Area Covered
+        </h2>
 
-        {/* RIGHT SIDE LOCATIONS */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "26px 30px",
-          }}
-        >
-          {locations.map((loc, i) => (
-            <div
-              key={i}
+        <div className="area-inner">
+          {/* LEFT — Map */}
+          <div className="area-map" style={{ display:"flex", justifyContent:"center", alignItems:"center" }}>
+            <img
+              src={indiaMap}
+              alt="India map showing CSK locations"
               style={{
-                background: "rgba(255,255,255,0.55)",
-                padding: "14px",
-                borderRadius: "10px",
-                backdropFilter: "blur(6px)",
+                width: "100%",
+                maxWidth: "750px",
+                height: "auto",
+                objectFit: "contain",
               }}
-            >
-              <p
-                style={{
-                  fontSize: "0.95rem",
-                  fontWeight: 700,
-                  color: "#0f2844",
-                  margin: "0 0 6px",
-                }}
-              >
-                {loc.state}
-              </p>
+            />
+          </div>
 
-              <p
+          {/* RIGHT — Location cards */}
+          <div className="area-cards">
+            {locations.map((loc, i) => (
+              <div
+                key={i}
                 style={{
-                  fontSize: "0.82rem",
-                  color: "#334",
-                  lineHeight: 1.6,
-                  margin: 0,
+                  background: "rgba(255,255,255,0.55)",
+                  padding: "14px",
+                  borderRadius: "10px",
+                  backdropFilter: "blur(6px)",
                 }}
               >
-                {loc.address}
-              </p>
-            </div>
-          ))}
+                <p style={{ fontSize:"0.95rem", fontWeight:700, color:"#0f2844", margin:"0 0 6px" }}>
+                  {loc.state}
+                </p>
+                <p style={{ fontSize:"0.82rem", color:"#334", lineHeight:1.6, margin:0 }}>
+                  {loc.address}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

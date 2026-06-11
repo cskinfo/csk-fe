@@ -1,18 +1,12 @@
 // ─── AllServicesWithNav.jsx ───────────────────────────────────────────────────
-// Same as AllServices.jsx but every card's arrow button calls:
-//   props.onServiceClick(service.slug)
-//
-// This lets App.jsx swap to the ServiceDetail view.
-// If you use React Router, replace onServiceClick with useNavigate:
-//   navigate(`/services/${service.slug}`)
-
+// Responsive + touch-friendly version
+// • Single-column on mobile, bento grid on desktop
+// • Hover effects replaced with :active + touch state so they work on mobile
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { useState, useEffect, useRef, useCallback } from "react";
 
-
-import { useState, useEffect, useRef } from "react";
-
-/* ─── Keyframes ─────────────────────────────────────────────── */
+/* ─── Keyframes + responsive CSS ───────────────────────────────── */
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
 
@@ -40,6 +34,98 @@ const STYLES = `
     0%   { box-shadow: 0 0 0 0 rgba(120,184,245,0.35); }
     70%  { box-shadow: 0 0 0 10px rgba(120,184,245,0); }
     100% { box-shadow: 0 0 0 0 rgba(120,184,245,0); }
+  }
+
+  /* ── Service card touch/hover ── */
+  .svc-card {
+    transition: transform 0.28s cubic-bezier(.22,.68,0,1.2), box-shadow 0.28s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .svc-card.dark-card:hover,
+  .svc-card.dark-card:active,
+  .svc-card.dark-card.touch-active {
+    transform: translateY(-4px) scale(1.012);
+    box-shadow: 0 16px 56px rgba(14,39,84,0.45) !important;
+  }
+  .svc-card.light-card:hover,
+  .svc-card.light-card:active,
+  .svc-card.light-card.touch-active {
+    transform: translateY(-4px) scale(1.012);
+    box-shadow: 0 8px 32px rgba(23,74,151,0.14) !important;
+  }
+
+  /* ── Arrow button touch/hover ── */
+  .arrow-btn {
+    transition: background 0.2s, transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .arrow-btn.dark-btn:hover,
+  .arrow-btn.dark-btn:active,
+  .arrow-btn.dark-btn.touch-active {
+    background: rgba(255,255,255,0.22) !important;
+    transform: scale(1.12);
+  }
+  .arrow-btn.light-btn:hover,
+  .arrow-btn.light-btn:active,
+  .arrow-btn.light-btn.touch-active {
+    background: rgba(23,74,151,0.15) !important;
+    transform: scale(1.12);
+  }
+
+  /* ── Filter pill touch/hover ── */
+  .filter-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: all 0.2s cubic-bezier(.22,.68,0,1.2);
+  }
+  .filter-btn:not(.active):hover,
+  .filter-btn:not(.active):active {
+    background: rgba(23,74,151,0.07) !important;
+    color: #174A97 !important;
+  }
+
+  /* ── Filter scroll container ── */
+  .filter-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .filter-scroll::-webkit-scrollbar { display: none; }
+  .filter-scroll .filter-btn { flex-shrink: 0; }
+
+  /* ── Responsive grid rows ── */
+  .grid-row-2-1  { display: grid; grid-template-columns: 2fr 1fr;  gap: 20px; }
+  .grid-row-5-7  { display: grid; grid-template-columns: 5fr 7fr;  gap: 20px; align-items: stretch; }
+  .grid-row-1-2  { display: grid; grid-template-columns: 1fr 2fr;  gap: 20px; }
+  .grid-row-half { display: grid; grid-template-columns: 1fr 1fr;  gap: 20px; }
+
+  @media (max-width: 768px) {
+    .grid-row-2-1,
+    .grid-row-5-7,
+    .grid-row-1-2,
+    .grid-row-half {
+      grid-template-columns: 1fr !important;
+    }
+    /* Hide the empty placeholder cell on mobile */
+    .grid-placeholder { display: none; }
+  }
+
+  /* Orbit / VR visuals: scale down on mobile */
+  @media (max-width: 540px) {
+    .visual-orbit, .visual-vr { display: none; }
+    .integration-dots-wrap { display: none; }
+  }
+
+  /* Section padding */
+  @media (max-width: 480px) {
+    .services-section { padding: 48px 0 56px !important; }
+    .services-inner   { padding: 0 16px !important; }
+    .section-header   { margin-bottom: 28px !important; }
   }
 `;
 
@@ -143,7 +229,7 @@ function OrbitVisual() {
     { text:"Backup &\nRecovery", bottom:25, right:10 },
   ];
   return (
-    <div style={{ position:"relative", width:280, height:220, flexShrink:0 }}>
+    <div className="visual-orbit" style={{ position:"relative", width:280, height:220, flexShrink:0 }}>
       <div style={{ position:"absolute", top:"50%", left:"50%", width:140, height:140, borderRadius:"50%", transform:"translate(-50%,-50%)", background:"radial-gradient(circle, rgba(72,129,255,.45) 0%, rgba(72,129,255,.08) 60%, transparent 100%)", filter:"blur(12px)" }}/>
       <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:110, height:110, borderRadius:"50%", background:"linear-gradient(135deg,#1E4ED8 0%, #133B8F 100%)", border:"1px solid rgba(255,255,255,0.15)", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", color:"#fff", boxShadow:"0 0 35px rgba(59,130,246,.35)" }}>
         <div style={{ fontSize:34 }}>🛡️</div>
@@ -164,7 +250,7 @@ function OrbitVisual() {
 /* ─── VR Orbs Visual ─────────────────────────────────────────── */
 function VrOrbsVisual() {
   return (
-    <div style={{ position:"relative", width:220, height:160, flexShrink:0 }}>
+    <div className="visual-vr" style={{ position:"relative", width:220, height:160, flexShrink:0 }}>
       {[["Augmented Reality","top:8px;left:10px"],["Virtual Reality","top:8px;right:10px"]].map(([label,pos],i)=>(
         <div key={i} style={{ position:"absolute", ...Object.fromEntries(pos.split(";").filter(Boolean).map(p=>p.split(":").map(s=>s.trim()))), fontSize:9, fontWeight:600, color:"rgba(255,255,255,0.6)", letterSpacing:"0.04em" }}>{label}</div>
       ))}
@@ -183,11 +269,11 @@ function VrOrbsVisual() {
 /* ─── Integration Dots Visual ────────────────────────────────── */
 function IntegrationDotsVisual() {
   const nodes = [
-    {label:"Solution\nBased", x:50, y:30, accent:false},
-    {label:"Systems\nIntegration", x:160, y:55, accent:false, main:true},
-    {label:"Maximum\nReturn on\nInvestment", x:260, y:30, accent:false},
-    {label:"Best-of-Breed\nProcesses", x:50, y:130, accent:false},
-    {label:"On-time,\nHigh-Quality", x:260, y:115, accent:true},
+    {label:"Solution\nBased", x:10, y:30, accent:false},
+    {label:"Systems\nIntegration", x:100, y:55, accent:false, main:true},
+    {label:"Maximum\nReturn on\nInvestment", x:190, y:30, accent:false},
+    {label:"Best-of-Breed\nProcesses", x:20, y:130, accent:false},
+    {label:"On-time,\nHigh-Quality", x:200, y:130, accent:true},
   ];
   return (
     <div style={{ position:"relative", width:310, height:170 }}>
@@ -205,34 +291,74 @@ function IntegrationDotsVisual() {
   );
 }
 
+/* ─── useTouchActive hook ────────────────────────────────────── */
+// Returns ref + className. Adds "touch-active" on touchstart, removes on end/cancel.
+function useTouchActive(baseClass) {
+  const ref = useRef(null);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const on  = () => setActive(true);
+    const off = () => setActive(false);
+    el.addEventListener("touchstart", on,  { passive: true });
+    el.addEventListener("touchend",   off, { passive: true });
+    el.addEventListener("touchcancel",off, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", on);
+      el.removeEventListener("touchend",   off);
+      el.removeEventListener("touchcancel",off);
+    };
+  }, []);
+
+  return { ref, className: `${baseClass}${active ? " touch-active" : ""}` };
+}
+
 /* ─── Single Card ────────────────────────────────────────────── */
 function ServiceCard({ service, index, visible, onServiceClick }) {
   const isDark = service.dark;
   const iconKey = SERVICE_ICONS[index];
 
+  const { ref: cardRef, className: cardClass } = useTouchActive(
+    `svc-card ${isDark ? "dark-card" : "light-card"}`
+  );
+  const { ref: btnRef, className: btnClass } = useTouchActive(
+    `arrow-btn ${isDark ? "dark-btn" : "light-btn"}`
+  );
+
+  const isWide = service.size === "large" || service.size === "row2wide";
+
   return (
     <div
+      ref={cardRef}
+      className={cardClass}
+      onClick={() => onServiceClick && onServiceClick(service.slug)}
       style={{
-        borderRadius:16, padding:"28px 28px 24px",
-        position:"relative", overflow:"hidden",
-        display:"flex", flexDirection:"column",
-        transition:"transform 0.3s cubic-bezier(.22,.68,0,1.2), box-shadow 0.3s ease",
-        cursor:"pointer",
+        borderRadius: 16,
+        padding: "28px 28px 24px",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        cursor: "pointer",
         animation: visible ? `cardReveal 0.6s cubic-bezier(.22,.68,0,1.1) ${0.08*index}s both` : "none",
         opacity: visible ? undefined : 0,
         ...(isDark ? {
-          background:"linear-gradient(135deg,#0E2754 0%,#1B3F7A 40%,#1A3A70 100%)",
-          boxShadow:"0 8px 40px rgba(14,39,84,0.35)", color:"#fff",
+          background: "linear-gradient(135deg,#0E2754 0%,#1B3F7A 40%,#1A3A70 100%)",
+          boxShadow: "0 8px 40px rgba(14,39,84,0.35)",
+          color: "#fff",
         } : {
-          background:"#fff",
-          boxShadow:"0 2px 16px rgba(23,74,151,0.07)",
-          border:"1px solid rgba(23,74,151,0.08)", color:"#0F1F3D",
+          background: "#fff",
+          boxShadow: "0 2px 16px rgba(23,74,151,0.07)",
+          border: "1px solid rgba(23,74,151,0.08)",
+          color: "#0F1F3D",
         }),
       }}
-      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px) scale(1.012)"; e.currentTarget.style.boxShadow=isDark?"0 16px 56px rgba(14,39,84,0.45)":"0 8px 32px rgba(23,74,151,0.14)";}}
-      onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)"; e.currentTarget.style.boxShadow=isDark?"0 8px 40px rgba(14,39,84,0.35)":"0 2px 16px rgba(23,74,151,0.07)";}}
     >
-      {isDark && <div style={{ position:"absolute",inset:0,borderRadius:16,pointerEvents:"none",background:"radial-gradient(ellipse at 75% 20%, rgba(255,255,255,0.05) 0%, transparent 60%)" }}/>}
+      {isDark && (
+        <div style={{ position:"absolute",inset:0,borderRadius:16,pointerEvents:"none",background:"radial-gradient(ellipse at 75% 20%, rgba(255,255,255,0.05) 0%, transparent 60%)" }}/>
+      )}
 
       {/* top: number + label */}
       <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
@@ -240,21 +366,40 @@ function ServiceCard({ service, index, visible, onServiceClick }) {
         <span style={{ fontSize:11, fontWeight:600, letterSpacing:"0.07em", color:isDark?"rgba(255,255,255,0.45)":"rgba(23,74,151,0.50)", fontFamily:"'Manrope',sans-serif", textTransform:"uppercase" }}>{service.label}</span>
       </div>
 
-      {/* main row */}
-      <div style={{ display:"flex", flexDirection:(service.size==="large"||service.size==="row2wide")?"row":"column", gap:(service.size==="large"||service.size==="row2wide")?24:0, flex:1, alignItems:service.size==="row2wide"?"flex-start":undefined }}>
-        <div style={{ flex:1, display:"flex", flexDirection:"column" }}>
+      {/* main row — on mobile always column, on desktop follow size */}
+      <div style={{
+        display: "flex",
+        flexDirection: isWide ? "row" : "column",
+        gap: isWide ? 24 : 0,
+        flex: 1,
+        alignItems: service.size === "row2wide" ? "flex-start" : undefined,
+        flexWrap: "wrap",   // lets visuals drop below on narrow cards
+      }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
           {/* icon */}
           <div style={{ width:44, height:44, borderRadius:10, background:service.iconBg, border:isDark?"1px solid rgba(255,255,255,0.15)":`1px solid ${service.iconColor}22`, display:"flex", alignItems:"center", justifyContent:"center", color:service.iconColor, marginBottom:16, flexShrink:0, animation:"pulseRing 3s ease-in-out infinite" }}>
             {icons[iconKey]}
           </div>
-          <h3 style={{ fontSize:service.size==="large"?"clamp(17px,1.5vw,20px)":16, fontWeight:700, lineHeight:1.25, marginBottom:10, fontFamily:"'Bricolage Grotesque',sans-serif", color:isDark?"#fff":"#0B1F3A" }}>{service.title}</h3>
-          <p style={{ fontSize:13, lineHeight:1.7, marginBottom:18, color:isDark?"rgba(255,255,255,0.62)":"#4A5A70", fontFamily:"'Manrope',sans-serif", flex:1 }}>{service.desc}</p>
+          <h3 style={{ fontSize: service.size==="large" ? "clamp(15px,1.5vw,20px)" : 16, fontWeight:700, lineHeight:1.25, marginBottom:10, fontFamily:"'Bricolage Grotesque',sans-serif", color:isDark?"#fff":"#0B1F3A" }}>
+            {service.title}
+          </h3>
+          <p style={{ fontSize:13, lineHeight:1.7, marginBottom:18, color:isDark?"rgba(255,255,255,0.62)":"#4A5A70", fontFamily:"'Manrope',sans-serif", flex:1 }}>
+            {service.desc}
+          </p>
         </div>
 
-        {service.size==="large"&&service.visual==="orbit"&&<div style={{ display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}><OrbitVisual/></div>}
-        {service.size==="large"&&service.visual==="vrOrbs"&&<div style={{ display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}><VrOrbsVisual/></div>}
-        {service.size==="row2wide"&&service.visual==="integrationDots"&&(
-          <div style={{ flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(23,74,151,0.03)", border:"1px solid rgba(23,74,151,0.07)", borderRadius:12, padding:"15px 16px", minWidth:260 }}>
+        {service.size==="large" && service.visual==="orbit" && (
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+            <OrbitVisual/>
+          </div>
+        )}
+        {service.size==="large" && service.visual==="vrOrbs" && (
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+            <VrOrbsVisual/>
+          </div>
+        )}
+        {service.size==="row2wide" && service.visual==="integrationDots" && (
+          <div className="integration-dots-wrap" style={{ flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(23,74,151,0.03)", border:"1px solid rgba(23,74,151,0.07)", borderRadius:12, padding:"15px 16px", minWidth:260, overflowX:"auto" }}>
             <IntegrationDotsVisual/>
           </div>
         )}
@@ -271,21 +416,22 @@ function ServiceCard({ service, index, visible, onServiceClick }) {
 
       {/* CTA row */}
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", paddingTop:16, borderTop:isDark?"1px solid rgba(255,255,255,0.10)":"1px solid rgba(23,74,151,0.07)", marginTop:"auto" }}>
-        <span style={{ fontSize:11, fontWeight:700, letterSpacing:"0.10em", color:isDark?"rgba(255,255,255,0.55)":"#174A97", fontFamily:"'Manrope',sans-serif" }}>{service.cta}</span>
-        {/* ← THIS is the arrow button that navigates to the service page */}
+        <span style={{ fontSize:11, fontWeight:700, letterSpacing:"0.10em", color:isDark?"rgba(255,255,255,0.55)":"#174A97", fontFamily:"'Manrope',sans-serif" }}>
+          {service.cta}
+        </span>
         <button
-          onClick={() => onServiceClick && onServiceClick(service.slug)}
+          ref={btnRef}
+          className={btnClass}
+
           style={{
-            width:32, height:32, borderRadius:"50%",
-            background:isDark?"rgba(255,255,255,0.12)":"rgba(23,74,151,0.08)",
-            border:isDark?"1px solid rgba(255,255,255,0.18)":"1px solid rgba(23,74,151,0.14)",
+            width:36, height:36, borderRadius:"50%",
+            background: isDark ? "rgba(255,255,255,0.12)" : "rgba(23,74,151,0.08)",
+            border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(23,74,151,0.14)",
             display:"flex", alignItems:"center", justifyContent:"center",
-            color:isDark?"rgba(255,255,255,0.7)":"#174A97",
-            transition:"background 0.2s, transform 0.2s",
+            color: isDark ? "rgba(255,255,255,0.7)" : "#174A97",
             cursor:"pointer",
+            flexShrink: 0,
           }}
-          onMouseEnter={e=>{e.currentTarget.style.background=isDark?"rgba(255,255,255,0.22)":"rgba(23,74,151,0.15)"; e.currentTarget.style.transform="scale(1.12)";}}
-          onMouseLeave={e=>{e.currentTarget.style.background=isDark?"rgba(255,255,255,0.12)":"rgba(23,74,151,0.08)"; e.currentTarget.style.transform="scale(1)";}}
         >
           {icons.arrow}
         </button>
@@ -302,27 +448,39 @@ export default function AllServicesWithNav({ onServiceClick }) {
 
   useEffect(() => {
     injectStyles();
-    const obs = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setVisible(true); }, { threshold: 0.08 });
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.05 }   // lower threshold so mobile triggers sooner
+    );
     if (sectionRef.current) obs.observe(sectionRef.current);
     return () => obs.disconnect();
   }, []);
 
   const filteredServices = activeFilter === "All"
     ? SERVICES
-    : SERVICES.filter(s => s.label.toLowerCase().includes(activeFilter.toLowerCase()) || activeFilter.toLowerCase().includes(s.label.toLowerCase()));
+    : SERVICES.filter(s =>
+        s.label.toLowerCase().includes(activeFilter.toLowerCase()) ||
+        activeFilter.toLowerCase().includes(s.label.toLowerCase())
+      );
+
+  const show = (id) => filteredServices.some(s => s.id === id);
 
   return (
-    <section ref={sectionRef} style={{ background:"#F2F6FB", padding:"72px 0 80px", fontFamily:"'Manrope', sans-serif" }}>
-      <div style={{ maxWidth:1250, margin:"0 auto", padding:"0 28px" }}>
+    <section
+      ref={sectionRef}
+      className="services-section"
+      style={{ background:"#F2F6FB", padding:"72px 0 80px", fontFamily:"'Manrope', sans-serif" }}
+    >
+      <div className="services-inner" style={{ maxWidth:1250, margin:"0 auto", padding:"0 28px" }}>
 
         {/* Section Header */}
-        <div style={{ display:"flex", flexDirection:"column", gap:0, marginBottom:44 }}>
+        <div className="section-header" style={{ display:"flex", flexDirection:"column", gap:0, marginBottom:44 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20, animation:visible?"fadeUp 0.5s ease 0.05s both":"none", opacity:visible?undefined:0 }}>
             <div style={{ width:28, height:2, background:"#174A97", borderRadius:2 }}/>
             <span style={{ fontSize:11, fontWeight:700, letterSpacing:"0.14em", color:"#174A97", textTransform:"uppercase", fontFamily:"'Manrope',sans-serif" }}>ALL SERVICES</span>
           </div>
-          <div style={{ display:"flex", alignItems:"flex-start", gap:40, flexWrap:"wrap", justifyContent:"space-between" }}>
-            <h2 style={{ fontSize:"clamp(28px,3.5vw,42px)", fontWeight:800, color:"#0B1F3A", lineHeight:1.15, margin:0, fontFamily:"'Bricolage Grotesque',sans-serif", letterSpacing:"-0.025em", maxWidth:380, animation:visible?"fadeUp 0.55s ease 0.12s both":"none", opacity:visible?undefined:0 }}>
+          <div style={{ display:"flex", alignItems:"flex-start", gap:24, flexWrap:"wrap", justifyContent:"space-between" }}>
+            <h2 style={{ fontSize:"clamp(24px,3.5vw,42px)", fontWeight:800, color:"#0B1F3A", lineHeight:1.15, margin:0, fontFamily:"'Bricolage Grotesque',sans-serif", letterSpacing:"-0.025em", maxWidth:380, animation:visible?"fadeUp 0.55s ease 0.12s both":"none", opacity:visible?undefined:0 }}>
               Seven pillars of<br/>enterprise IT<br/>excellence
             </h2>
             <div style={{ flex:1, minWidth:260, maxWidth:520, background:"rgba(255,255,255,0.85)", border:"1.5px solid rgba(23,74,151,0.14)", borderLeft:"4px solid #174A97", borderRadius:"0 10px 10px 0", padding:"16px 20px", animation:visible?"fadeUp 0.55s ease 0.22s both":"none", opacity:visible?undefined:0 }}>
@@ -333,14 +491,31 @@ export default function AllServicesWithNav({ onServiceClick }) {
           </div>
         </div>
 
-        {/* Filter Pills */}
-        <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:36, animation:visible?"fadeUp 0.5s ease 0.3s both":"none", opacity:visible?undefined:0 }}>
+        {/* Filter Pills — horizontally scrollable on mobile */}
+        <div
+          className="filter-scroll"
+          style={{ marginBottom:36, animation:visible?"fadeUp 0.5s ease 0.3s both":"none", opacity:visible?undefined:0 }}
+        >
           {FILTERS.map((f, fi) => {
             const isActive = activeFilter === f;
             return (
-              <button key={f} onClick={() => setActiveFilter(f)} style={{ padding:"7px 16px", borderRadius:999, border:"none", cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"'Manrope',sans-serif", letterSpacing:"0.02em", transition:"all 0.2s cubic-bezier(.22,.68,0,1.2)", background:isActive?"#174A97":"rgba(255,255,255,0.9)", color:isActive?"#fff":"#4A5A70", boxShadow:isActive?"0 4px 16px rgba(23,74,151,0.28)":"0 1px 4px rgba(0,0,0,0.06)", border:isActive?"none":"1px solid rgba(23,74,151,0.10)", transform:isActive?"scale(1.04)":"scale(1)", animation:visible?`filterPop 0.4s cubic-bezier(.22,.68,0,1.3) ${0.32+fi*0.04}s both`:"none" }}
-                onMouseEnter={e=>{if(!isActive){e.currentTarget.style.background="rgba(23,74,151,0.07)";e.currentTarget.style.color="#174A97";}}}
-                onMouseLeave={e=>{if(!isActive){e.currentTarget.style.background="rgba(255,255,255,0.9)";e.currentTarget.style.color="#4A5A70";}}}
+              <button
+                key={f}
+                className={`filter-btn${isActive ? " active" : ""}`}
+                onClick={() => setActiveFilter(f)}
+                style={{
+                  padding:"8px 16px", borderRadius:999, border:"none", cursor:"pointer",
+                  fontSize:12, fontWeight:600, fontFamily:"'Manrope',sans-serif",
+                  letterSpacing:"0.02em",
+                  background: isActive ? "#174A97" : "rgba(255,255,255,0.9)",
+                  color: isActive ? "#fff" : "#4A5A70",
+                  boxShadow: isActive ? "0 4px 16px rgba(23,74,151,0.28)" : "0 1px 4px rgba(0,0,0,0.06)",
+                  border: isActive ? "none" : "1px solid rgba(23,74,151,0.10)",
+                  transform: isActive ? "scale(1.04)" : "scale(1)",
+                  animation: visible ? `filterPop 0.4s cubic-bezier(.22,.68,0,1.3) ${0.32+fi*0.04}s both` : "none",
+                  // Make tap targets large enough on mobile
+                  minHeight: 38,
+                }}
               >{f}</button>
             );
           })}
@@ -348,35 +523,42 @@ export default function AllServicesWithNav({ onServiceClick }) {
 
         {/* Cards Grid */}
         <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
-          {(activeFilter==="All"||activeFilter==="Infra Managed"||activeFilter==="IT Outsourcing")&&(
-            <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:20 }}>
+
+          {(activeFilter==="All" || activeFilter==="Infra Managed" || activeFilter==="IT Outsourcing") && (
+            <div className="grid-row-2-1">
               {filteredServices.filter(s=>s.id==="01").map(s=><ServiceCard key={s.id} service={s} index={0} visible={visible} onServiceClick={onServiceClick}/>)}
               {filteredServices.filter(s=>s.id==="02").map(s=><ServiceCard key={s.id} service={s} index={1} visible={visible} onServiceClick={onServiceClick}/>)}
             </div>
           )}
-          {(activeFilter==="All"||activeFilter==="Break Fix"||activeFilter==="System Integration")&&(
-            <div style={{ display:"grid", gridTemplateColumns:"5fr 7fr", gap:20, alignItems:"stretch" }}>
+
+          {(activeFilter==="All" || activeFilter==="Break Fix" || activeFilter==="System Integration") && (
+            <div className="grid-row-5-7">
               {filteredServices.filter(s=>s.id==="03").map(s=><ServiceCard key={s.id} service={s} index={2} visible={visible} onServiceClick={onServiceClick}/>)}
               {filteredServices.filter(s=>s.id==="04").map(s=><ServiceCard key={s.id} service={s} index={3} visible={visible} onServiceClick={onServiceClick}/>)}
             </div>
           )}
-          {(activeFilter==="All"||activeFilter==="AV Solutions"||activeFilter==="AR & VR Devices")&&(
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20 }}>
+
+          {(activeFilter==="All" || activeFilter==="AV Solutions" || activeFilter==="AR & VR Devices") && (
+            <div className="grid-row-1-2">
               {filteredServices.filter(s=>s.id==="05").map(s=><ServiceCard key={s.id} service={s} index={4} visible={visible} onServiceClick={onServiceClick}/>)}
               {filteredServices.filter(s=>s.id==="06").map(s=><ServiceCard key={s.id} service={s} index={5} visible={visible} onServiceClick={onServiceClick}/>)}
             </div>
           )}
-          {(activeFilter==="All"||activeFilter==="Corporate Training")&&(
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+
+          {(activeFilter==="All" || activeFilter==="Corporate Training") && (
+            <div className="grid-row-half">
               {filteredServices.filter(s=>s.id==="07").map(s=><ServiceCard key={s.id} service={s} index={6} visible={visible} onServiceClick={onServiceClick}/>)}
-              <div/>
+              <div className="grid-placeholder"/>
             </div>
           )}
-          {activeFilter!=="All"&&filteredServices.length===1&&(
-            <div style={{ maxWidth:560 }}>
+
+          {/* Single filtered result */}
+          {activeFilter !== "All" && filteredServices.length === 1 && (
+            <div style={{ maxWidth: 560 }}>
               <ServiceCard service={filteredServices[0]} index={0} visible={visible} onServiceClick={onServiceClick}/>
             </div>
           )}
+
         </div>
       </div>
     </section>

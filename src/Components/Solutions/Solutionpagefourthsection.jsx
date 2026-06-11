@@ -35,7 +35,10 @@ const nodes = [
   },
 ];
 
-function EcosystemCanvas({ progress }) {
+// Responsive node positions stay the same — they're percentage-based
+// so they naturally scale. We only need to adjust card sizes & canvas.
+
+function EcosystemCanvas({ progress, width, height }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -52,29 +55,24 @@ function EcosystemCanvas({ progress }) {
     nodes.forEach((node) => {
       const tx = W * node.pos.x;
       const ty = H * node.pos.y;
-
       const dx = tx - cx;
       const dy = ty - cy;
-      const len = Math.sqrt(dx * dx + dy * dy);
 
-      // How far the line has drawn (0 → 1 based on progress)
       const drawn = Math.min(progress, 1);
       const ex = cx + dx * drawn;
       const ey = cy + dy * drawn;
 
-      // Animated dashed line
       ctx.save();
       ctx.beginPath();
       ctx.setLineDash([8, 6]);
       ctx.lineDashOffset = -progress * 40;
       ctx.strokeStyle = node.color;
       ctx.lineWidth = 2;
-      ctx.globalAlpha = 10;
+      ctx.globalAlpha = 1;
       ctx.moveTo(cx, cy);
       ctx.lineTo(ex, ey);
       ctx.stroke();
 
-      // Glowing dot traveling along line
       if (drawn > 0) {
         const dotX = cx + dx * (drawn * 0.85);
         const dotY = cy + dy * (drawn * 0.85);
@@ -90,13 +88,13 @@ function EcosystemCanvas({ progress }) {
 
       ctx.restore();
     });
-  }, [progress]);
+  }, [progress, width, height]);
 
   return (
     <canvas
       ref={canvasRef}
-      width={888}
-      height={460}
+      width={width}
+      height={height}
       className="absolute inset-0 w-full h-full pointer-events-none"
     />
   );
@@ -104,205 +102,170 @@ function EcosystemCanvas({ progress }) {
 
 export default function SolutionPageFourthSection() {
   const sectionRef = useRef(null);
+  const diagramRef = useRef(null);
   const [progress, setProgress] = useState(0);
+  const [dims, setDims] = useState({ width: 888, height: 460 });
   const rafRef = useRef(null);
   const startRef = useRef(null);
+
+  // Measure diagram container on mount and resize
+  useEffect(() => {
+    const measure = () => {
+      if (!diagramRef.current) return;
+      const w = diagramRef.current.offsetWidth;
+      // Keep a nice aspect ratio: taller on mobile, wider on desktop
+      const h = w < 480 ? Math.round(w * 1.05) : w < 768 ? Math.round(w * 0.72) : 460;
+      setDims({ width: w, height: h });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (diagramRef.current) ro.observe(diagramRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   const startAnimation = () => {
     setProgress(0);
     startRef.current = null;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
     const duration = 3000;
     const animate = (ts) => {
       if (!startRef.current) startRef.current = ts;
       const elapsed = ts - startRef.current;
       const p = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - p, 4);
       setProgress(eased);
-      if (p < 2) rafRef.current = requestAnimationFrame(animate);
+      if (p < 1) rafRef.current = requestAnimationFrame(animate);
     };
     rafRef.current = requestAnimationFrame(animate);
   };
 
   useEffect(() => {
-
-  const observer = new IntersectionObserver(
-
-    ([entry]) => {
-
-      // SECTION ENTER
-      if (entry.isIntersecting) {
-
-        startAnimation();
-
-      }
-
-      // SECTION EXIT
-      else {
-
-        setProgress(0);
-
-        if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          startAnimation();
+        } else {
+          setProgress(0);
+          if (rafRef.current) cancelAnimationFrame(rafRef.current);
         }
-      }
-    },
+      },
+      { threshold: 0.35 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => {
+      observer.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
-    {
-      threshold: 0.35,
-    }
+  // Responsive card sizing
+  const isMobile = dims.width < 480;
+  const isTablet = dims.width < 768;
+  const cardWidth = isMobile ? 130 : isTablet ? 155 : 190;
+  const cardPadX = isMobile ? "10px" : "14px";
+  const cardPadY = isMobile ? "8px" : "12px";
+  const iconSize = isMobile ? "w-7 h-7 text-base" : "w-9 h-9 text-lg";
+  const labelSize = isMobile ? "9px" : isTablet ? "10px" : "12px";
+  const subSize = isMobile ? "8px" : "10px";
 
-  );
-
-  if (sectionRef.current) {
-
-    observer.observe(sectionRef.current);
-
-  }
-
-  return () => {
-
-    observer.disconnect();
-
-    if (rafRef.current) {
-
-      cancelAnimationFrame(rafRef.current);
-
-    }
-  };
-
-}, []);
+  // Core circle sizing
+  const coreSize = isMobile ? 72 : isTablet ? 84 : 96;
+  const ringSize = isMobile ? 96 : isTablet ? 112 : 126;
+  const glowSize = isMobile ? 130 : isTablet ? 152 : 170;
+  const glowOffset = isMobile ? -29 : isTablet ? -34 : -35;
+  const coreIconSize = isMobile ? "text-xl" : "text-2xl";
+  const coreLabelSize = isMobile ? "9px" : "11px";
 
   return (
     <section
       ref={sectionRef}
-      className="w-full py-16 px-6"
+      className="w-full py-10 sm:py-14 md:py-16 px-4 sm:px-6"
       style={{
         background: "linear-gradient(160deg, #0a1628 0%, #0d1f3c 60%, #0a1628 100%)",
         fontFamily: "'Poppins', sans-serif",
       }}
     >
       {/* Header */}
-      <div className="text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+      <div className="text-center mb-8 sm:mb-10">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
           Our Digital Ecosystem
         </h2>
         <div className="w-16 h-0.5 bg-blue-500 mx-auto mb-4" />
-        <p className="text-[#9aabb8] text-sm max-w-lg mx-auto leading-relaxed">
+        <p className="text-[#9aabb8] text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
           A fully integrated architecture designed to protect, connect, and scale your modern
           enterprise operations.
         </p>
       </div>
 
       {/* Diagram */}
-      <div className="relative max-w-3xl mx-auto " style={{ height: "460px" }}>
-        {/* Canvas lines */}
-        <EcosystemCanvas progress={progress} />
+      <div
+        ref={diagramRef}
+        className="relative max-w-3xl mx-auto w-full"
+        style={{ height: `${dims.height}px` }}
+      >
+        {/* Canvas lines — uses measured pixel dimensions */}
+        <EcosystemCanvas progress={progress} width={dims.width} height={dims.height} />
 
-        {/* Center CSK Core circle */}
-       {/* Center CSK Core Circle */}
-<div
-  className="absolute z-20"
-  style={{
-    left: "50%",
-    top: "50%",
-    transform: "translate(-50%, -50%)",
-  }}
->
-
-  {/* OUTER GLOW */}
-  <div
-    className="absolute inset-0 rounded-full animate-pulse"
-    style={{
-      width: "170px",
-      height: "170px",
-      left: "-35px",
-      top: "-35px",
-
-      background:
-        "radial-gradient(circle, rgba(59,130,246,0.20) 0%, rgba(59,130,246,0.06) 45%, transparent 75%)",
-
-      filter: "blur(18px)",
-    }}
-  />
-
-  {/* SECOND RING */}
-  <div
-    className="absolute rounded-full"
-    style={{
-      width: "126px",
-      height: "126px",
-      left: "-15px",
-      top: "-15px",
-
-      border: "1px solid rgba(59,130,246,0.20)",
-
-      boxShadow:
-        "0 0 40px rgba(59,130,246,0.18)",
-    }}
-  />
-
-  {/* MAIN CORE */}
-  <div
-    className="
-      relative
-
-      w-[96px]
-      h-[96px]
-
-      rounded-full
-
-      flex
-      flex-col
-      items-center
-      justify-center
-
-      text-white
-    "
-    style={{
-      background:
-        "linear-gradient(180deg, #2563eb 0%, #1d4ed8 55%, #153ea8 100%)",
-
-      border:
-        "2px solid rgba(255,255,255,0.08)",
-
-      boxShadow:
-        `
-          inset 0 1px 8px rgba(255,255,255,0.18),
-          0 0 28px rgba(37,99,235,0.55),
-          0 0 60px rgba(37,99,235,0.28)
-        `,
-    }}
-  >
-
-    {/* INNER SHINE */}
-    <div
-      className="absolute top-[10px] left-1/2 -translate-x-1/2 rounded-full"
-      style={{
-        width: "52px",
-        height: "18px",
-
-        background:
-          "rgba(255,255,255,0.22)",
-
-        filter: "blur(8px)",
-      }}
-    />
-
-    {/* ICON */}
-    <span className="text-[26px] relative z-10 mb-[2px]">
-      💻
-    </span>
-
-    {/* TEXT */}
-    <span className="text-[12px] font-semibold relative z-10 tracking-[0.3px]">
-      CSK Core
-    </span>
-
-  </div>
-</div>
+        {/* Center CSK Core */}
+        <div
+          className="absolute z-20"
+          style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+        >
+          {/* Outer glow */}
+          <div
+            className="absolute rounded-full animate-pulse"
+            style={{
+              width: `${glowSize}px`,
+              height: `${glowSize}px`,
+              left: `${glowOffset}px`,
+              top: `${glowOffset}px`,
+              background:
+                "radial-gradient(circle, rgba(59,130,246,0.20) 0%, rgba(59,130,246,0.06) 45%, transparent 75%)",
+              filter: "blur(18px)",
+            }}
+          />
+          {/* Second ring */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: `${ringSize}px`,
+              height: `${ringSize}px`,
+              left: `${-(ringSize - coreSize) / 2}px`,
+              top: `${-(ringSize - coreSize) / 2}px`,
+              border: "1px solid rgba(59,130,246,0.20)",
+              boxShadow: "0 0 40px rgba(59,130,246,0.18)",
+            }}
+          />
+          {/* Main core */}
+          <div
+            className="relative rounded-full flex flex-col items-center justify-center text-white"
+            style={{
+              width: `${coreSize}px`,
+              height: `${coreSize}px`,
+              background: "linear-gradient(180deg, #2563eb 0%, #1d4ed8 55%, #153ea8 100%)",
+              border: "2px solid rgba(255,255,255,0.08)",
+              boxShadow:
+                "inset 0 1px 8px rgba(255,255,255,0.18), 0 0 28px rgba(37,99,235,0.55), 0 0 60px rgba(37,99,235,0.28)",
+            }}
+          >
+            <div
+              className="absolute top-[10px] left-1/2 -translate-x-1/2 rounded-full"
+              style={{
+                width: "52px",
+                height: "18px",
+                background: "rgba(255,255,255,0.22)",
+                filter: "blur(8px)",
+              }}
+            />
+            <span className={`${coreIconSize} relative z-10 mb-[2px]`}>💻</span>
+            <span
+              className="relative z-10 font-semibold tracking-[0.3px]"
+              style={{ fontSize: coreLabelSize }}
+            >
+              CSK Core
+            </span>
+          </div>
+        </div>
 
         {/* Node Cards */}
         {nodes.map((node) => {
@@ -310,12 +273,13 @@ export default function SolutionPageFourthSection() {
           return (
             <div
               key={node.id}
-              className="absolute z-10 flex items-center gap-3 px-4 py-3 rounded-xl border border-white/10 backdrop-blur-sm transition-all duration-500"
+              className="absolute z-10 flex items-center gap-2 rounded-xl backdrop-blur-sm transition-all duration-500"
               style={{
                 left: `${node.pos.x * 100}%`,
                 top: `${node.pos.y * 100}%`,
                 transform: "translate(-50%, -50%)",
-                width: "190px",
+                width: `${cardWidth}px`,
+                padding: `${cardPadY} ${cardPadX}`,
                 background: "rgba(255,255,255,0.05)",
                 opacity: cardVisible ? 1 : 0,
                 scale: cardVisible ? "1" : "0.85",
@@ -323,16 +287,25 @@ export default function SolutionPageFourthSection() {
                 border: `1px solid ${node.color}44`,
               }}
             >
-              {/* Icon circle */}
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-lg"
+                className={`${iconSize} rounded-full flex items-center justify-center flex-shrink-0`}
                 style={{ background: `${node.color}22` }}
               >
                 {node.icon}
               </div>
-              <div>
-                <p className="text-white text-xs font-semibold leading-tight">{node.label}</p>
-                <p className="text-[#9aabb8] text-[10px] leading-tight mt-0.5">{node.sub}</p>
+              <div className="min-w-0">
+                <p
+                  className="text-white font-semibold leading-tight truncate"
+                  style={{ fontSize: labelSize }}
+                >
+                  {node.label}
+                </p>
+                <p
+                  className="text-[#9aabb8] leading-tight mt-0.5"
+                  style={{ fontSize: subSize }}
+                >
+                  {node.sub}
+                </p>
               </div>
             </div>
           );

@@ -12,9 +12,9 @@ const styles = {
   },
   footerTop: {
     display: "grid",
-    gridTemplateColumns: "2fr 1fr 1.2fr 1.5fr",
-    gap: "32px",
-    maxWidth: "1100px",
+    gridTemplateColumns: "1.8fr 1fr 1.1fr 1.4fr 1.5fr",
+    gap: "28px",
+    maxWidth: "1280px",
     margin: "0 auto",
     padding: "0 24px 40px",
   },
@@ -149,59 +149,119 @@ const styles = {
     color: "#556678",
     textDecoration: "none",
   },
+  contactItem: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "10px",
+    marginBottom: "16px",
+  },
+  contactIcon: {
+    width: "30px",
+    height: "30px",
+    borderRadius: "4px",
+    background: "#162030",
+    border: "1px solid #2a3d52",
+    color: "#1a6bbd",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "15px",
+    flexShrink: 0,
+  },
+  contactText: {
+    fontSize: "12px",
+    lineHeight: "1.7",
+    color: "#9aabb8",
+    margin: 0,
+  },
 };
 
-const quickLinks = ["Home", "About Company", "Our Services", "Portfolio", "Latest Blogs", "Contact Us"];
-const services = ["Managed Services", "Cloud Security", "Resource Augmentation", "Digital Transformation", "Energy & Power IT"];
+const quickLinks = [
+  "Home",
+  "About Company",
+  "Our Services",
+  "Portfolio",
+  "Latest Blogs",
+  "Contact Us",
+];
 
-const SocialButton = ({ icon }) => {
+const services = [
+  "Managed Services",
+  "Cloud Security",
+  "Resource Augmentation",
+  "Digital Transformation",
+  "Energy & Power IT",
+];
+
+function SocialButton(props) {
+  const icon = props.icon;
   const [hovered, setHovered] = useState(false);
+
+  const style = Object.assign({}, styles.socialBtn, {
+    borderColor: hovered ? "#1a6bbd" : "#2a3d52",
+    color: hovered ? "#fff" : "#9aabb8",
+  });
+
+  const className = "ti ti-brand-" + icon;
+
   return (
     <button
-      style={{
-        ...styles.socialBtn,
-        borderColor: hovered ? "#1a6bbd" : "#2a3d52",
-        color: hovered ? "#fff" : "#9aabb8",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      style={style}
+      onMouseEnter={function () { setHovered(true); }}
+      onMouseLeave={function () { setHovered(false); }}
+      onTouchStart={function () { setHovered(true); }}
+      onTouchEnd={function () { setHovered(false); }}
       aria-label={icon}
     >
-      <i className={`ti ti-brand-${icon}`} aria-hidden="true" />
+      <i className={className} aria-hidden="true"></i>
     </button>
   );
-};
+}
 
-const NavLink = ({ label, href = "#" }) => {
+function NavLink(props) {
+  const label = props.label;
+  const href = props.href ? props.href : "#";
   const [hovered, setHovered] = useState(false);
-  return (
+
+  const linkStyle = Object.assign({}, styles.link, {
+    color: hovered ? "#fff" : "#ccc",
+  });
+
+ return (
+  
     <li style={styles.linkItem}>
-      <span style={styles.linkArrow}>›</span>
+      <span style={styles.linkArrow}>{"\u203A"}</span>
       <a
         href={href}
-        style={{ ...styles.link, color: hovered ? "#fff" : "#ccc" }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        style={linkStyle}
+        onMouseEnter={function () { setHovered(true); }}
+        onMouseLeave={function () { setHovered(false); }}
+        onTouchStart={function () { setHovered(true); }}
+        onTouchEnd={function () { setHovered(false); }}
       >
         {label}
       </a>
     </li>
   );
-};
+}
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [btnHovered, setBtnHovered] = useState(false);
 
-  const handleSubscribe = () => {
+  const handleSubscribe = function () {
     if (email.trim()) {
-      alert(`Subscribed with: ${email}`);
+      alert("Subscribed with: " + email);
       setEmail("");
     }
   };
 
+  const newsletterBtnStyle = Object.assign({}, styles.newsletterBtn, {
+    background: btnHovered ? "#155ea8" : "#1a6bbd",
+  });
+
   return (
-    <>
+    <div>
       <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet"
@@ -211,18 +271,34 @@ export default function Footer() {
         rel="stylesheet"
       />
 
-      <footer style={styles.footer}>
-        <div style={styles.footerTop}>
+      <style>
+        {
+          "@media (max-width: 1199px) {" +
+          ".footer-grid { grid-template-columns: 1fr 1fr 1fr !important; gap: 28px !important; }" +
+          ".footer-col-contact { grid-column: span 3 !important; }" +
+          "}" +
+          "@media (max-width: 767px) {" +
+          ".footer-grid { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }" +
+          ".footer-col-brand, .footer-col-contact { grid-column: span 2 !important; }" +
+          "}" +
+          "@media (max-width: 479px) {" +
+          ".footer-grid { grid-template-columns: 1fr !important; gap: 24px !important; }" +
+          ".footer-col-brand, .footer-col-contact { grid-column: span 1 !important; }" +
+          ".footer-bottom-inner { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }" +
+          "}"
+        }
+      </style>
 
-          {/* Brand Column */}
-          <div>
+      <footer style={styles.footer}>
+        <div className="footer-grid" style={styles.footerTop}>
+
+          <div className="footer-col-brand">
             <div style={styles.brandLogo}>
               <span style={styles.logoIcon}>CSK</span>
               <span style={styles.brandName}>Information Technology</span>
             </div>
             <p style={styles.brandDesc}>
-              Delivering quality from the ages of technology. We are experts in
-              offshore software development, running parallel with technology trends.
+              Delivering quality from the ages of technology. We are experts in offshore software development, running parallel with technology trends.
             </p>
             <div style={styles.socialIcons}>
               <SocialButton icon="facebook" />
@@ -231,27 +307,51 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 style={styles.colHeading}>Quick Links</h4>
             <ul style={styles.linkList}>
-              {quickLinks.map((label) => (
-                <NavLink key={label} label={label} />
-              ))}
+              {quickLinks.map(function (label) {
+                return <NavLink key={label} label={label} />;
+              })}
             </ul>
           </div>
 
-          {/* Our Services */}
           <div>
             <h4 style={styles.colHeading}>Our Services</h4>
             <ul style={styles.linkList}>
-              {services.map((label) => (
-                <NavLink key={label} label={label} />
-              ))}
+              {services.map(function (label) {
+                return <NavLink key={label} label={label} />;
+              })}
             </ul>
           </div>
 
-          {/* Newsletter */}
+          <div className="footer-col-contact">
+            <h4 style={styles.colHeading}>Get In Touch</h4>
+
+            <div style={styles.contactItem}>
+              <div style={styles.contactIcon}>
+                <i className="ti ti-map-pin" aria-hidden="true"></i>
+              </div>
+              <p style={styles.contactText}>
+                Tower 4, Unit B-1206, 12th Floor, NX ONE, Tech Zone-IV, Gautam Buddha Nagar, Uttar Pradesh - 201306
+              </p>
+            </div>
+
+            <div style={styles.contactItem}>
+              <div style={styles.contactIcon}>
+                <i className="ti ti-mail" aria-hidden="true"></i>
+              </div>
+              <p style={styles.contactText}>info@cskinfotech.com</p>
+            </div>
+
+            <div style={styles.contactItem}>
+              <div style={styles.contactIcon}>
+                <i className="ti ti-phone" aria-hidden="true"></i>
+              </div>
+              <p style={styles.contactText}>+91 120 605 4621</p>
+            </div>
+          </div>
+
           <div>
             <h4 style={styles.colHeading}>Newsletter</h4>
             <p style={styles.newsletterDesc}>
@@ -262,31 +362,29 @@ export default function Footer() {
                 type="email"
                 placeholder="Email address"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSubscribe()}
+                onChange={function (e) { setEmail(e.target.value); }}
+                onKeyDown={function (e) { if (e.key === "Enter") { handleSubscribe(); } }}
                 style={styles.newsletterInput}
               />
               <button
                 onClick={handleSubscribe}
-                style={{
-                  ...styles.newsletterBtn,
-                  background: btnHovered ? "#155ea8" : "#1a6bbd",
-                }}
-                onMouseEnter={() => setBtnHovered(true)}
-                onMouseLeave={() => setBtnHovered(false)}
+                style={newsletterBtnStyle}
+                onMouseEnter={function () { setBtnHovered(true); }}
+                onMouseLeave={function () { setBtnHovered(false); }}
+                onTouchStart={function () { setBtnHovered(true); }}
+                onTouchEnd={function () { setBtnHovered(false); }}
                 aria-label="Subscribe"
               >
-                <i className="ti ti-arrow-right" aria-hidden="true" />
+                <i className="ti ti-arrow-right" aria-hidden="true"></i>
               </button>
             </div>
           </div>
 
         </div>
 
-        {/* Footer Bottom */}
-        <div style={styles.footerBottom}>
+        <div className="footer-bottom-inner" style={styles.footerBottom}>
           <p style={styles.copyright}>
-            © 2026 CSK Information Technology Pvt Ltd. All rights reserved.
+            (c) 2026 CSK Information Technology Pvt Ltd. All rights reserved.
           </p>
           <div style={styles.bottomLinks}>
             <a href="#" style={styles.bottomLink}>Privacy Policy</a>
@@ -294,6 +392,6 @@ export default function Footer() {
           </div>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

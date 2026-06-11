@@ -10,160 +10,244 @@ export default function LifeAtCSK() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (showVideo) {
-        setShowVideo(false);
-      }
+      if (showVideo) setShowVideo(false);
     };
-
     window.addEventListener("wheel", handleScroll);
-
-    return () => {
-      window.removeEventListener(
-        "wheel",
-        handleScroll
-      );
-    };
+    return () => window.removeEventListener("wheel", handleScroll);
   }, [showVideo]);
 
   return (
     <>
+      <style>{`
+
+
+
+        /* ── SECTION ── */
+        .lac-section {
+          position: relative;
+          background: #F5F7FA;
+          padding: 50px 16px;
+          overflow: hidden;
+        }
+
+
+        /* ── SMALL TAG ── */
+        .lac-tag {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .lac-tag p {
+          text-transform: uppercase;
+          letter-spacing: 14px;
+          color: #0A4B8F;
+          font-size: 14px;         /* mobile */
+          font-weight: 600;
+        }
+
+        /* ── BIG CSK ── */
+        .lac-title-wrap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .lac-csk {
+          position: relative;
+          font-weight: 900;
+          line-height: 0.9;
+          text-transform: uppercase;
+          cursor: pointer;
+          color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+          background-size: cover;
+          background-position: center;
+          transition: all 0.5s ease;
+          user-select: none;
+          -webkit-text-stroke: 3px #3D4B63;
+          filter: drop-shadow(0px 12px 30px rgba(0,0,0,0.18));
+          letter-spacing: -4px;
+
+          /* mobile size */
+          font-size: clamp(72px, 22vw, 120px);
+          
+        }
+        .lac-csk:hover {
+          transform: scale(1.03);
+        }
+
+        /* ── SUB TEXT ── */
+        .lac-sub {
+    position: relative;
+  font-weight: 900;
+  color: transparent;
+
+  background-size: cover;
+  background-position: center;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  filter: blur(6px) drop-shadow(0px 12px 30px rgba(0,0,0,0.18));
+}
+
+
+
+        /* ── VIDEO OVERLAY ── */
+        .lac-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          background: black;
+          overflow: hidden;
+        }
+        .lac-video {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .lac-gradient {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.30),
+            rgba(0,0,0,0.50),
+            rgba(0,0,0,0.70)
+          );
+        }
+        .lac-overlay-text {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 20;
+        }
+        .lac-overlay-tag {
+          text-transform: uppercase;
+          letter-spacing: 14px;
+          color: rgba(255,255,255,0.70);
+          font-size: 16px;         /* mobile */
+          margin-bottom: 20px;
+        }
+        .lac-overlay-csk {
+          font-weight: 900;
+          line-height: 1;
+          color: transparent;
+          opacity: 0.25;
+          user-select: none;
+          -webkit-text-stroke: 3px rgba(255,255,255,0.9);
+          letter-spacing: -8px;
+
+          /* mobile size */
+          font-size: clamp(80px, 28vw, 160px);
+        }
+        .lac-close-btn {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          z-index: 30;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.10);
+          backdrop-filter: blur(12px);
+          color: white;
+          font-size: 32px;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          line-height: 1;
+        }
+        .lac-close-btn:hover {
+          background: rgba(255,255,255,0.20);
+        }
+
+        /* ════════════════════════════════
+           TABLET  ≥ 640px
+        ════════════════════════════════ */
+        @media (min-width: 640px) {
+          .lac-tag p         { font-size: 17px; }
+          .lac-csk           { font-size: clamp(100px, 20vw, 160px); letter-spacing: -6px; -webkit-text-stroke: 4px #3D4B63; }
+          .lac-sub p         { font-size: 15px; }
+          .lac-overlay-tag   { font-size: 19px; }
+          .lac-overlay-csk   { font-size: clamp(120px, 24vw, 200px); letter-spacing: -10px; }
+          .lac-close-btn     { width: 52px; height: 52px; top: 24px; right: 24px; }
+        }
+
+        /* ════════════════════════════════
+           DESKTOP  ≥ 1024px  (original sizes)
+        ════════════════════════════════ */
+        @media (min-width: 1024px) {
+          .lac-section       { padding: 50px 0; }
+          .lac-tag p         { font-size: 20px; }
+          .lac-csk           { font-size: 200px; letter-spacing: -10px; -webkit-text-stroke: 5px #3D4B63; }
+          .lac-sub p         { font-size: 16px; }
+          .lac-overlay-tag   { font-size: 22px; margin-bottom: 24px; }
+          .lac-overlay-csk   { font-size: 240px; letter-spacing: -12px; }
+          .lac-close-btn     { width: 56px; height: 56px; top: 24px; right: 24px; font-size: 36px; }
+        }
+
+      `}</style>
+
       {/* SECTION */}
-      <section className="relative bg-[#F5F7FA] py-[50px] overflow-hidden">
+      <section className="lac-section">
+
         {/* SMALL TEXT */}
-        <div className="text-center mb-5">
-          <p className="uppercase tracking-[14px] text-[#0A4B8F] text-[20px] font-semibold">
-            LIFE AT
-          </p>
+        <div className="lac-tag">
+          <p>LIFE AT</p>
         </div>
 
         {/* BIG CSK */}
-        <div className="flex justify-center items-center">
+        <div className="lac-title-wrap">
           <h1
+            className="lac-csk"
             onMouseEnter={() => setShowVideo(true)}
-            className="
-              relative
-              text-[100px]
-              md:text-[120px]
-              lg:text-[200px]
-              font-black
-              leading-[0.9]
-              uppercase
-              cursor-pointer
-              text-transparent
-              bg-clip-text
-              bg-cover
-              bg-center
-              transition-all
-              duration-500
-              hover:scale-[1.03]
-              select-none
-            "
-            style={{
-              backgroundImage: `url(${thumbnail})`,
-              WebkitTextStroke: "5px #3D4B63",
-              filter:
-                "drop-shadow(0px 12px 30px rgba(0,0,0,0.18))",
-              letterSpacing: "-10px",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+             onClick={() => setShowVideo(true)}
+            style={{ backgroundImage: `url(${thumbnail})` }}
           >
             CSK
           </h1>
         </div>
 
         {/* SUB TEXT */}
-        <div className="text-center mt-4">
-          <p className="text-[#6B7280] text-[16px] tracking-[1px]">
-            Hover on CSK to explore our workplace
-          </p>
+        <div className="lac-sub">
+          <p>Hover on CSK to explore our workplace</p>
         </div>
+
       </section>
 
       {/* VIDEO OVERLAY */}
       {showVideo && (
-        <div
-          className="
-            fixed
-            inset-0
-            z-[9999]
-            bg-black
-            overflow-hidden
-          "
-        >
-          {/* VIDEO */}
+        <div className="lac-overlay">
+
           <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="
-              absolute
-              inset-0
-              w-full
-              h-full
-              object-cover
-            "
+            autoPlay muted loop playsInline
+            className="lac-video"
           >
-            <source
-              src={lifeVideo}
-              type="video/mp4"
-            />
+            <source src={lifeVideo} type="video/mp4" />
           </video>
 
-          {/* OVERLAY */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
+          <div className="lac-gradient" />
 
-          {/* TEXT */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
-            <p className="uppercase tracking-[14px] text-white/70 text-[22px] mb-6">
-              LIFE AT
-            </p>
-
-            <h1
-              className="
-                text-[140px]
-                md:text-[240px]
-                font-black
-                leading-none
-                tracking-[-12px]
-                text-transparent
-                opacity-25
-                select-none
-              "
-              style={{
-                WebkitTextStroke:
-                  "3px rgba(255,255,255,0.9)",
-              }}
-            >
-              CSK
-            </h1>
+          <div className="lac-overlay-text">
+            <p className="lac-overlay-tag">LIFE AT</p>
+            <h1 className="lac-overlay-csk">CSK</h1>
           </div>
 
-          {/* CLOSE BUTTON */}
           <button
-            onClick={() =>
-              setShowVideo(false)
-            }
-            className="
-              absolute
-              top-6
-              right-6
-              z-30
-              w-14
-              h-14
-              rounded-full
-              bg-white/10
-              backdrop-blur-md
-              text-white
-              text-4xl
-              hover:bg-white/20
-              transition-all
-              duration-300
-            "
+            className="lac-close-btn"
+            onClick={() => setShowVideo(false)}
           >
             ×
           </button>
+
         </div>
       )}
     </>

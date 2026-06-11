@@ -1,4 +1,4 @@
-import heroimg from "../../assets/CareerPagePhoto/CareerPageHeroSectionPhoto.jpg";
+import heroimg from "../../assets/CareerPagePhoto/CareerPageHeroSectionPhotos.jpg";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -10,17 +10,14 @@ export default function CareerHeroSection() {
 
   return (
     <section
-      className="relative w-full flex items-center justify-center overflow-hidden"
-      style={{
-        height: "430px",
-      }}
+      className="relative w-full flex items-center justify-center overflow-hidden h-[260px] sm:h-[320px] md:h-[380px] lg:h-[430px]"
     >
       {/* Background Image */}
-      <img
+      <motion.img
         src={heroimg}
         alt=""
-         loading="eager"
-  fetchPriority="high"
+        loading="eager"
+        fetchPriority="high"
         className="absolute inset-0 w-full h-full object-cover"
         style={{
           objectPosition: "center 25%",
@@ -42,22 +39,20 @@ export default function CareerHeroSection() {
       <motion.div
         initial={{ opacity: 0, y: -60, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
+        whileTap={{ scale: 0.985 }} // touch devices ke liye tap-feedback
         transition={{
           duration: 0.8,
           ease: "easeOut",
         }}
-        className="relative z-10"
+        className="relative z-10 w-[92%] sm:w-[90%] md:w-[85%] lg:w-[660px] max-w-[660px]
+                   px-5 py-6 sm:px-8 sm:py-7 md:px-10 md:py-8
+                   rounded-2xl text-center"
         style={{
-          width: "660px",
-          maxWidth: "90%",
-          padding: "32px 40px",
-          borderRadius: "18px",
           background: "rgba(255,255,255,0.28)",
           backdropFilter: "blur(1px)",
           WebkitBackdropFilter: "blur(10px)",
           border: "1px solid rgba(255,255,255,0.35)",
           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-          textAlign: "center",
         }}
       >
         {/* Heading */}
@@ -68,18 +63,16 @@ export default function CareerHeroSection() {
             delay: 0.3,
             duration: 0.7,
           }}
+          className="font-extrabold leading-tight mb-3 sm:mb-4 md:mb-[18px]"
           style={{
-            fontSize: "clamp(2.2rem, 4vw, 2.3rem)",
-            fontWeight: 900,
-            lineHeight: 1.1,
+            fontSize: "clamp(1.5rem, 6vw, 2.3rem)",
             color: "#0B4ED8",
-            marginBottom: "18px",
             fontFamily: "Inter, sans-serif",
           }}
         >
           Innovate Your Career. Find Your
-          <br />
-          Next IT Role Here.
+          <br className="hidden sm:block" />
+          {" "}Next IT Role Here.
         </motion.h1>
 
         {/* Description */}
@@ -90,12 +83,12 @@ export default function CareerHeroSection() {
             delay: 0.5,
             duration: 0.7,
           }}
+          className="mx-auto"
           style={{
-            fontSize: "1rem",
+            fontSize: "clamp(0.85rem, 2.5vw, 1rem)",
             lineHeight: 1.7,
             color: "#191B23",
             maxWidth: "700px",
-            margin: "0 auto",
             fontFamily: "Inter, sans-serif",
           }}
         >

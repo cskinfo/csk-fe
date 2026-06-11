@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-// Pure CSS keyframes injected once
 const STYLES = `
 @keyframes heroFadeUp {
   from { opacity: 0; transform: translateY(32px); }
@@ -50,15 +49,12 @@ export default function ServicesPageHeroSection() {
   const canvasRef = useRef(null);
   const [entered, setEntered] = useState(false);
 
-  // Inject keyframes & trigger entrance
   useEffect(() => {
     injectStyles();
-    // Tiny delay so browser paints once before animating
     const t = setTimeout(() => setEntered(true), 60);
     return () => clearTimeout(t);
   }, []);
 
-  // Canvas: animated mesh + orbs
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -66,7 +62,6 @@ export default function ServicesPageHeroSection() {
     let width  = (canvas.width  = canvas.offsetWidth);
     let height = (canvas.height = canvas.offsetHeight);
     let animId;
-    // fade-in alpha for canvas (0→1 over ~800ms)
     let canvasAlpha = 0;
 
     const resize = () => {
@@ -93,7 +88,6 @@ export default function ServicesPageHeroSection() {
       ctx.save();
       ctx.globalAlpha = canvasAlpha;
 
-      // mesh
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i+1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
@@ -116,7 +110,6 @@ export default function ServicesPageHeroSection() {
         if (nodes[i].y < 0 || nodes[i].y > height) nodes[i].vy *= -1;
       }
 
-      // orbs
       orbs.forEach(orb => {
         const g = ctx.createRadialGradient(orb.x,orb.y,0,orb.x,orb.y,orb.r);
         g.addColorStop(0, orb.color);
@@ -137,7 +130,6 @@ export default function ServicesPageHeroSection() {
     return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
   }, []);
 
-  // Reusable animation style builder
   const anim = (name, delay = 0, duration = 0.65, easing = "cubic-bezier(.22,.68,0,1.2)") =>
     entered
       ? { animation: `${name} ${duration}s ${easing} ${delay}s both` }
@@ -147,54 +139,67 @@ export default function ServicesPageHeroSection() {
     <section
       className="relative overflow-hidden"
       style={{
-        minHeight: 420,
+        minHeight: 320,
         background:
           "linear-gradient(130deg, #C8DFF8 0%, #D8EAF9 18%, #E6EFF7 42%, #EAF0F5 65%, #EAEEF2 85%, #E8ECF4 100%)",
       }}
     >
-      {/* Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ display:"block" }} />
 
-      {/* ── Top-right circle cluster ── */}
+      {/* Top-right circle cluster — hidden on mobile, smaller on tablet */}
       <div
-        className="absolute pointer-events-none"
-        style={{ top:28, right:36, ...anim("heroSlideLeft", 0.05, 0.9, "cubic-bezier(.22,.68,0,1.15)") }}
+        className="absolute pointer-events-none hidden sm:block"
+        style={{
+          top: 28,
+          right: 36,
+          // Scale down on tablet
+          transform: "scale(var(--cluster-scale, 1))",
+          transformOrigin: "top right",
+          // CSS custom property trick via inline style
+          ["--cluster-scale"]: "1",
+          ...anim("heroSlideLeft", 0.05, 0.9, "cubic-bezier(.22,.68,0,1.15)")
+        }}
       >
-        <div style={{ width:210, height:210, borderRadius:"50%",
-          border:"1.5px solid rgba(120,184,245,0.30)",
-          background:"radial-gradient(circle at 40% 38%, rgba(120,184,245,0.22) 0%, rgba(200,225,252,0.10) 60%, transparent 100%)",
-          boxShadow:"inset 0 0 40px rgba(120,184,245,0.10)" }} />
-        <div style={{ width:100, height:100, borderRadius:"50%",
-          border:"1px solid rgba(120,184,245,0.20)", background:"rgba(180,215,250,0.12)",
-          position:"absolute", top:52, left:52 }} />
-        <div style={{ width:14, height:14, borderRadius:"50%",
-          background:"rgba(100,160,240,0.40)", position:"absolute", top:14, left:14,
-          boxShadow:"0 0 12px rgba(100,160,240,0.30)",
-          animation:"dotPulse 2.4s ease-in-out 1.2s infinite" }} />
-        <div style={{ width:62, height:62, borderRadius:"50%",
-          border:"1px solid rgba(120,184,245,0.18)", background:"rgba(200,225,252,0.14)",
-          position:"absolute", top:-20, left:-58 }} />
+        {/* Tablet: shrink via a wrapper className */}
+        <div className="sm:scale-[0.65] md:scale-[0.85] lg:scale-100 origin-top-right">
+          <div style={{ width:210, height:210, borderRadius:"50%",
+            border:"1.5px solid rgba(120,184,245,0.30)",
+            background:"radial-gradient(circle at 40% 38%, rgba(120,184,245,0.22) 0%, rgba(200,225,252,0.10) 60%, transparent 100%)",
+            boxShadow:"inset 0 0 40px rgba(120,184,245,0.10)" }} />
+          <div style={{ width:100, height:100, borderRadius:"50%",
+            border:"1px solid rgba(120,184,245,0.20)", background:"rgba(180,215,250,0.12)",
+            position:"absolute", top:52, left:52 }} />
+          <div style={{ width:14, height:14, borderRadius:"50%",
+            background:"rgba(100,160,240,0.40)", position:"absolute", top:14, left:14,
+            boxShadow:"0 0 12px rgba(100,160,240,0.30)",
+            animation:"dotPulse 2.4s ease-in-out 1.2s infinite" }} />
+          <div style={{ width:62, height:62, borderRadius:"50%",
+            border:"1px solid rgba(120,184,245,0.18)", background:"rgba(200,225,252,0.14)",
+            position:"absolute", top:-20, left:-58 }} />
+        </div>
       </div>
 
-      {/* ── Bottom-left circle cluster ── */}
+      {/* Bottom-left circle cluster — hidden on mobile, smaller on tablet */}
       <div
-        className="absolute pointer-events-none"
+        className="absolute pointer-events-none hidden sm:block"
         style={{ bottom:18, left:28, ...anim("heroSlideRight", 0.1, 0.9, "cubic-bezier(.22,.68,0,1.15)") }}
       >
-        <div style={{ width:200, height:200, borderRadius:"50%",
-          border:"1.5px solid rgba(255,255,255,0.55)",
-          background:"radial-gradient(circle at 55% 55%, rgba(255,255,255,0.45) 0%, rgba(200,220,245,0.15) 55%, transparent 100%)",
-          boxShadow:"0 8px 32px rgba(120,184,245,0.08)" }} />
-        <div style={{ width:90, height:90, borderRadius:"50%",
-          background:"radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(200,218,248,0.20) 100%)",
-          border:"1px solid rgba(255,255,255,0.60)", position:"absolute", top:56, left:56 }} />
-        <div style={{ width:52, height:52, borderRadius:"50%",
-          border:"1px solid rgba(120,184,245,0.22)", background:"rgba(220,235,252,0.18)",
-          position:"absolute", top:-16, left:140 }} />
-        <div style={{ width:10, height:10, borderRadius:"50%",
-          background:"rgba(120,184,245,0.50)", position:"absolute", top:8, left:170,
-          boxShadow:"0 0 8px rgba(120,184,245,0.35)",
-          animation:"dotPulse 2.8s ease-in-out 1.5s infinite" }} />
+        <div className="sm:scale-[0.65] md:scale-[0.85] lg:scale-100 origin-bottom-left">
+          <div style={{ width:200, height:200, borderRadius:"50%",
+            border:"1.5px solid rgba(255,255,255,0.55)",
+            background:"radial-gradient(circle at 55% 55%, rgba(255,255,255,0.45) 0%, rgba(200,220,245,0.15) 55%, transparent 100%)",
+            boxShadow:"0 8px 32px rgba(120,184,245,0.08)" }} />
+          <div style={{ width:90, height:90, borderRadius:"50%",
+            background:"radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(200,218,248,0.20) 100%)",
+            border:"1px solid rgba(255,255,255,0.60)", position:"absolute", top:56, left:56 }} />
+          <div style={{ width:52, height:52, borderRadius:"50%",
+            border:"1px solid rgba(120,184,245,0.22)", background:"rgba(220,235,252,0.18)",
+            position:"absolute", top:-16, left:140 }} />
+          <div style={{ width:10, height:10, borderRadius:"50%",
+            background:"rgba(120,184,245,0.50)", position:"absolute", top:8, left:170,
+            boxShadow:"0 0 8px rgba(120,184,245,0.35)",
+            animation:"dotPulse 2.8s ease-in-out 1.5s infinite" }} />
+        </div>
       </div>
 
       {/* Diagonal accent lines */}
@@ -205,17 +210,19 @@ export default function ServicesPageHeroSection() {
         <line x1="30" y1="0" x2="320" y2="150" stroke="#78B8F5" strokeWidth="0.5"/>
       </svg>
 
-      {/* ── Content ── */}
+      {/* Content */}
       <div
-        className="relative z-10 mx-auto px-6 text-center flex flex-col items-center justify-center"
-        style={{ maxWidth:860, paddingTop:90, paddingBottom:90 }}
+        className="relative z-10 mx-auto text-center flex flex-col items-center justify-center
+                   px-5 sm:px-8 md:px-10
+                   pt-12 pb-12 sm:pt-16 sm:pb-16 md:pt-20 md:pb-20 lg:pt-[90px] lg:pb-[90px]"
+        style={{ maxWidth: 860 }}
       >
-        {/* Pill — pops in first */}
+        {/* Pill */}
         <div style={{
           display:"inline-flex", alignItems:"center", gap:8,
           background:"rgba(120,184,245,0.14)",
           border:"1px solid rgba(120,184,245,0.30)",
-          borderRadius:999, padding:"5px 16px", marginBottom:24,
+          borderRadius:999, padding:"5px 16px", marginBottom:20,
           ...anim("pillPop", 0.18, 0.55, "cubic-bezier(.22,.68,0,1.4)")
         }}>
           <span style={{ width:7, height:7, borderRadius:"50%", background:"#174A97",
@@ -229,19 +236,25 @@ export default function ServicesPageHeroSection() {
         {/* Heading line 1 */}
         <div style={anim("heroFadeDown", 0.32, 0.7, "cubic-bezier(.22,.68,0,1.1)")}>
           <h1 style={{
-            fontSize:"clamp(38px,5vw,52px)", fontWeight:800, color:"#0F3872",
-            lineHeight:1.1, letterSpacing:"-0.03em", fontFamily:"'Georgia', serif",
+            fontSize:"clamp(26px, 5.5vw, 52px)",
+            fontWeight:800, color:"#0F3872",
+            lineHeight:1.12, letterSpacing:"-0.03em",
+            fontFamily:"'Georgia', serif",
             marginBottom:0,
+            // Tighter on very small screens
+            paddingLeft: 4, paddingRight: 4,
           }}>
             Everything Your IT Needs,
           </h1>
         </div>
 
-        {/* Heading line 2 — slight extra delay → stagger effect */}
+        {/* Heading line 2 */}
         <div style={anim("heroFadeUp", 0.46, 0.7, "cubic-bezier(.22,.68,0,1.1)")}>
           <h1 style={{
-            fontSize:"clamp(38px,5vw,52px)", fontWeight:800,
-            lineHeight:1.2, letterSpacing:"-0.03em", fontFamily:"'Georgia', serif",
+            fontSize:"clamp(26px, 5.5vw, 52px)",
+            fontWeight:800,
+            lineHeight:1.2, letterSpacing:"-0.03em",
+            fontFamily:"'Georgia', serif",
             background:"linear-gradient(95deg, #174A97 20%, #4A90D9 80%)",
             WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
           }}>
@@ -249,11 +262,11 @@ export default function ServicesPageHeroSection() {
           </h1>
         </div>
 
-        {/* Divider — grows from center */}
+        {/* Divider */}
         <div style={{
           height:3, borderRadius:99,
           background:"linear-gradient(90deg, #78B8F5, #174A97)",
-          margin:"22px auto",
+          margin:"18px auto",
           ...(entered
             ? { animation:`dividerGrow 0.55s cubic-bezier(.22,.68,0,1.2) 0.72s both` }
             : { width:0, opacity:0 }),
@@ -261,8 +274,13 @@ export default function ServicesPageHeroSection() {
 
         {/* Description */}
         <p style={{
-          fontSize:"clamp(14px,1.2vw,17px)", color:"#3A506B",
-          lineHeight:1.75, maxWidth:700, margin:"0 auto",
+          fontSize:"clamp(13px, 1.15vw, 17px)",
+          color:"#3A506B",
+          lineHeight:1.75,
+          maxWidth: 680,
+          margin:"0 auto",
+          paddingLeft: 4,
+          paddingRight: 4,
           ...anim("heroFadeUp", 0.82, 0.65, "ease-out"),
         }}>
           From infrastructure management and cloud migration to AV solutions
@@ -273,4 +291,3 @@ export default function ServicesPageHeroSection() {
     </section>
   );
 }
-

@@ -1,5 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
+/* ─── Touch-active hook ─────────────────────────────────────── */
+function useTouchActive() {
+  const ref = useRef(null);
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const on  = () => setActive(true);
+    const off = () => setActive(false);
+    el.addEventListener("touchstart",  on,  { passive: true });
+    el.addEventListener("touchend",    off, { passive: true });
+    el.addEventListener("touchcancel", off, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart",  on);
+      el.removeEventListener("touchend",    off);
+      el.removeEventListener("touchcancel", off);
+    };
+  }, []);
+  return { ref, active };
+}
+
+/* ─── Service data ──────────────────────────────────────────── */
 const services = [
   {
     title: "24x7 Monitoring & Proactive Maintenance",
@@ -40,8 +62,7 @@ const services = [
   },
 ];
 
-// 6 satellite nodes evenly placed at 60deg intervals
-// angle = starting angle in degrees (0 = right, -90 = top)
+/* ─── Orbit config ──────────────────────────────────────────── */
 const orbitNodes = [
   { label: "24×7\nMonitoring",    bg: "#3b82f6", angle: -90 },
   { label: "Remote\nHelp Desk",   bg: "#1a2c5b", angle: -30 },
@@ -51,21 +72,23 @@ const orbitNodes = [
   { label: "Security\nSolutions", bg: "#1a2c5b", angle: 210 },
 ];
 
-const ORBIT_R = 148; // px, distance from center to satellite center
-const SAT_R   = 42;  // px, satellite circle radius
-const CX      = 200; // center x of SVG
-const CY      = 200; // center y of SVG
+const ORBIT_R  = 148;
+const SAT_R    = 42;
+const CX       = 200;
+const CY       = 200;
 const SVG_SIZE = 400;
 
 function toRad(deg) { return (deg * Math.PI) / 180; }
 
-function OrbitDiagram() {
+/* ─── Orbit diagram ─────────────────────────────────────────── */
+function OrbitDiagram({ size = SVG_SIZE }) {
   const [angle, setAngle] = useState(0);
+  const scale = size / SVG_SIZE;
 
   useEffect(() => {
     let frame;
     const tick = () => {
-      setAngle((a) => a +0.04); // degrees per frame
+      setAngle(a => a + 0.04);
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
@@ -74,46 +97,29 @@ function OrbitDiagram() {
 
   return (
     <svg
-      width={SVG_SIZE}
-      height={SVG_SIZE}
+      width={size}
+      height={size}
       viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
-      style={{ display: "block", overflow: "visible" }}
+      style={{ display: "block", overflow: "visible", maxWidth: "100%" }}
     >
-      {/* Dashed orbit rings */}
       <circle cx={CX} cy={CY} r={ORBIT_R}      fill="none" stroke="rgba(30,50,100,0.13)" strokeWidth="1" strokeDasharray="5 7" />
       <circle cx={CX} cy={CY} r={ORBIT_R + 26} fill="none" stroke="rgba(30,50,100,0.10)" strokeWidth="1" strokeDasharray="5 7" />
 
-      {/* Rotating group — spokes + satellites */}
       <g style={{ transformOrigin: `${CX}px ${CY}px`, transform: `rotate(${angle}deg)` }}>
         {orbitNodes.map((n, i) => {
           const rad = toRad(n.angle);
           const sx = CX + ORBIT_R * Math.cos(rad);
           const sy = CY + ORBIT_R * Math.sin(rad);
           const lines = n.label.split("\n");
-
           return (
             <g key={i}>
-              {/* Spoke */}
-              <line
-                x1={CX} y1={CY} x2={sx} y2={sy}
-                stroke="rgba(30,50,100,0.14)" strokeWidth="1" strokeDasharray="4 5"
-              />
-              {/* Satellite circle */}
+              <line x1={CX} y1={CY} x2={sx} y2={sy} stroke="rgba(30,50,100,0.14)" strokeWidth="1" strokeDasharray="4 5" />
               <circle cx={sx} cy={sy} r={SAT_R} fill={n.bg} />
-              {/* Counter-rotate text so it stays upright */}
               <g style={{ transformOrigin: `${sx}px ${sy}px`, transform: `rotate(${-angle}deg)` }}>
                 {lines.map((line, li) => (
-                  <text
-                    key={li}
-                    x={sx}
-                    y={sy + (li - (lines.length - 1) / 2) * 13}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill="white"
-                    fontSize="10.5"
-                    fontWeight="700"
-                    fontFamily="Manrope, sans-serif"
-                  >
+                  <text key={li} x={sx} y={sy + (li - (lines.length - 1) / 2) * 13}
+                    textAnchor="middle" dominantBaseline="middle"
+                    fill="white" fontSize="10.5" fontWeight="700" fontFamily="Manrope, sans-serif">
                     {line}
                   </text>
                 ))}
@@ -123,88 +129,141 @@ function OrbitDiagram() {
         })}
       </g>
 
-      {/* Center circle — always on top, not rotating */}
       <circle cx={CX} cy={CY} r={66} fill="#0f1e3c" />
       <circle cx={CX} cy={CY} r={60} fill="#1a2c5b" opacity="0.6" />
-      <text x={CX} y={CY - 8} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="13" fontWeight="800" fontFamily="Manrope, sans-serif">
-        YOUR
-      </text>
-      <text x={CX} y={CY + 10} textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.65)" fontSize="11" fontWeight="500" fontFamily="Manrope, sans-serif">
-        BUSINESS
-      </text>
+      <text x={CX} y={CY - 8}  textAnchor="middle" dominantBaseline="middle" fill="white"                   fontSize="13" fontWeight="800" fontFamily="Manrope, sans-serif">YOUR</text>
+      <text x={CX} y={CY + 10} textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.65)"  fontSize="11" fontWeight="500" fontFamily="Manrope, sans-serif">BUSINESS</text>
     </svg>
   );
 }
 
+/* ─── Service card ──────────────────────────────────────────── */
+function ServiceCard({ s }) {
+  const { ref, active } = useTouchActive();
+  const [hovered, setHovered] = useState(false);
+  const lifted = hovered || active;
+
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 12,
+        border: lifted ? "1px solid rgba(26,44,91,0.35)" : "1px solid #e5e7eb",
+        borderRadius: 12,
+        padding: "14px",
+        background: lifted ? "#f0f4ff" : "#f9fafb",
+        transform: lifted ? "translateY(-2px)" : "translateY(0)",
+        boxShadow: lifted ? "0 6px 20px rgba(26,44,91,0.10)" : "none",
+        transition: "all 0.22s cubic-bezier(.22,.68,0,1.2)",
+        cursor: "default",
+        WebkitTapHighlightColor: "transparent",
+        touchAction: "manipulation",
+      }}
+    >
+      <div style={{ width: 36, height: 36, borderRadius: 8, background: lifted ? "#3b82f6" : "#1a2c5b", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "background 0.22s" }}>
+        {s.icon}
+      </div>
+      <div>
+        <h4 style={{ fontSize: 13, fontWeight: 700, color: "#0f1e3c", marginBottom: 4 }}>{s.title}</h4>
+        <p style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main component ────────────────────────────────────────── */
 export default function ITServicesSection() {
+  // Measure container width to scale orbit diagram on mobile
+  const wrapRef = useRef(null);
+  const [orbitSize, setOrbitSize] = useState(SVG_SIZE);
+
+  useEffect(() => {
+    const update = () => {
+      if (!wrapRef.current) return;
+      const w = wrapRef.current.offsetWidth;
+      // On mobile the orbit takes full width; cap at SVG_SIZE
+      setOrbitSize(Math.min(w, SVG_SIZE));
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+        .its-section {
+          font-family: 'Manrope', sans-serif;
+          background: #fff;
+          padding: 56px 64px;
+        }
+        .its-inner {
+          display: flex;
+          flex-direction: row;
+          gap: 64px;
+          align-items: center;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .its-left  { flex: 1; min-width: 0; }
+        .its-right { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+        /* Tablet */
+        @media (max-width: 900px) {
+          .its-section { padding: 48px 32px; }
+          .its-inner   { gap: 40px; }
+        }
+
+        /* Mobile — stack vertically, orbit on top */
+        @media (max-width: 640px) {
+          .its-section { padding: 40px 20px; }
+          .its-inner   { flex-direction: column-reverse; gap: 32px; }
+          .its-right   { width: 100%; }
+        }
       `}</style>
-      <section
-        style={{ fontFamily: "'Manrope', sans-serif" }}
-        className="bg-white flex flex-col lg:flex-row gap-10 lg:gap-16 px-25 py-14 items-center"
-      >
-        {/* ── LEFT ── */}
-        <div className="flex-1 min-w-0">
-          {/* Tag */}
-          <div className="flex items-center gap-2 mb-5">
-            <div className="w-6 h-[2px] bg-amber-400" />
-            <span className="text-[11px] font-bold tracking-[0.14em] text-amber-400 uppercase">
-              Deep Dive
-            </span>
+
+      <section className="its-section">
+        <div className="its-inner">
+
+          {/* ── LEFT ── */}
+          <div className="its-left">
+            {/* Tag */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+              <div style={{ width: 24, height: 2, background: "#f59e0b", borderRadius: 2 }} />
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: "#f59e0b", textTransform: "uppercase" }}>
+                Deep Dive
+              </span>
+            </div>
+
+            {/* Heading */}
+            <h2 style={{ fontSize: "clamp(26px, 3vw, 36px)", fontWeight: 800, lineHeight: 1.15, color: "#0f1e3c", marginBottom: 16 }}>
+              We Are Ready to<br />
+              Take Control of<br />
+              Your IT
+            </h2>
+
+            {/* Sub */}
+            <p style={{ fontSize: 14, color: "#6b7280", lineHeight: 1.75, marginBottom: 28, maxWidth: 520 }}>
+              Our team acts as an extension of your in-house staff — managing your critical infrastructure, applications, and IT needs so your team stays focused on driving business growth.
+            </p>
+
+            {/* Service Cards */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {services.map((s, i) => <ServiceCard key={i} s={s} />)}
+            </div>
           </div>
 
-          {/* Heading */}
-          <h2
-            className="text-[36px] font-extrabold leading-[1.15] mb-4"
-            style={{ color: "#0f1e3c" }}
-          >
-            We Are Ready to<br />
-            Take Control of<br />
-            Your IT
-          </h2>
-
-          {/* Sub */}
-          <p className="text-sm text-gray-500 leading-relaxed mb-8 max-w-[680px]">
-            Our team acts as an extension of your in-house staff — managing your
-            critical infrastructure, applications, and IT needs so your team
-            stays focused on driving business growth.
-          </p>
-
-          {/* Service Cards */}
-          <div className="flex flex-col gap-3">
-            {services.map((s, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 border border-gray-200 rounded-xl p-3.5 bg-gray-50"
-              >
-                <div
-                  className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 "
-                  style={{ background: "#1a2c5b" }}
-                >
-                  {s.icon}
-                </div>
-                <div>
-                  <h4
-                    className="text-sm font-bold mb-1"
-                    style={{ color: "#0f1e3c" }}
-                  >
-                    {s.title}
-                  </h4>
-                  <p className="text-xs text-black-500 leading-relaxed">
-                    {s.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
+          {/* ── RIGHT — orbit diagram, scales on mobile ── */}
+          <div className="its-right" ref={wrapRef}>
+            <OrbitDiagram size={orbitSize} />
           </div>
-        </div>
 
-        {/* ── RIGHT — Pure SVG orbit diagram ── */}
-        <div className="flex-shrink-0 flex items-center justify-center">
-          <OrbitDiagram />
         </div>
       </section>
     </>

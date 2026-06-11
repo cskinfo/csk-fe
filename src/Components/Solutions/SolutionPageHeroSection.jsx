@@ -86,7 +86,7 @@ export default function SolutionPageHeroSection() {
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
       <section
-        className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 py-20"
+        className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 py-16 sm:py-20"
         style={{
           background: "linear-gradient(135deg, #0a1628 0%, #0d1f3c 40%, #0a1628 100%)",
           fontFamily: "'Poppins', sans-serif",
@@ -98,17 +98,17 @@ export default function SolutionPageHeroSection() {
         <div className="relative z-10 flex flex-col items-center max-w-3xl w-full text-center">
 
           {/* Heading */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-8 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 sm:mb-8 tracking-tight">
             Overcoming Challenges,<br />
             Achieving Dreams!
           </h1>
 
           {/* Card */}
           <div
-            className="w-full max-w-2xl rounded-2xl p-10 backdrop-blur-md border border-white/10"
+            className="w-full max-w-2xl rounded-2xl p-6 sm:p-8 md:p-10 backdrop-blur-md border border-white/10"
             style={{ background: "rgba(255,255,255,0.06)" }}
           >
-            <p className="text-sm md:text-base text-[#c8d8e8] leading-relaxed mb-8">
+            <p className="text-sm md:text-base text-[#c8d8e8] leading-relaxed mb-6 sm:mb-8">
               The technology landscape is changing rapidly, disrupting existing businesses
               and altering entire marketplaces. Enterprises must adapt to these dynamic
               changes and integrate the latest innovations into their "IT infrastructures or risk
@@ -117,8 +117,12 @@ export default function SolutionPageHeroSection() {
               strategically aligned with business objectives.
             </p>
 
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link to="/Service" className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-7 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5">
+            {/* Buttons — full-width stacked on mobile, inline from sm up */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <Link
+                to="/Service"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-7 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-center"
+              >
                 Explore Our Services
               </Link>
               <button className="bg-transparent hover:bg-white/10 text-white text-sm font-semibold px-7 py-3 rounded-lg border-2 border-white/40 hover:border-white transition-all duration-200 hover:-translate-y-0.5">
