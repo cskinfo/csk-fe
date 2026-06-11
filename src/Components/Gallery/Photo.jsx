@@ -96,19 +96,9 @@ function ScreenIllustration() {
 function GalleryCard({ item, isWide }) {
   const { ref, active } = useTouchActive();
   const [hovered, setHovered] = useState(false);
-<<<<<<< HEAD
+  const [imageError, setImageError] = useState(false);
   const lifted = hovered || active;
   const config = CATEGORIES[item.category] || { bg: "#1a2c5b" };
-=======
-  const [imageError, setImageError] = useState(false); // 👈 Track if image fails to load
-  const config = CATEGORIES[item.category];
-
-  const renderPlaceholder = () => {
-    if (item.category === "CERTIFICATION") return <CertificateIllustration />;
-    if (item.category === "COMPANY EVENT") return <ScreenIllustration />;
-    return null; // Festival uses background decoration
-  };
->>>>>>> 3c157437f4a06160d3cb6071e74ad820c8ae12fd
 
   return (
     <div
@@ -126,34 +116,36 @@ function GalleryCard({ item, isWide }) {
         cursor: "pointer",
         transform: lifted ? "scale(1.015)" : "scale(1)",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        boxShadow: lifted ? "0 16px 40px rgba(0,0,0,0.35)" : "0 4px 16px rgba(0,0,0,0.2)",
+        boxShadow: lifted
+          ? "0 16px 40px rgba(0,0,0,0.35)"
+          : "0 4px 16px rgba(0,0,0,0.2)",
         WebkitTapHighlightColor: "transparent",
         touchAction: "manipulation",
       }}
     >
-      {item.image && (
-<<<<<<< HEAD
-        <img src={item.image} alt={item.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity: lifted ? 0.85 : 0.75, transition:"opacity 0.3s ease" }}/>
-=======
+      {/* Image — with error fallback */}
+      {item.image && !imageError && (
         <img
           src={item.image}
           alt={item.title}
-          onError={() => setImageError(true)} // 👈 Fallback if URL goes 404
+          onError={() => setImageError(true)}
           style={{
             position: "absolute",
             inset: 0,
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            opacity: hovered ? 0.85 : 0.75,
+            opacity: lifted ? 0.85 : 0.75,
             transition: "opacity 0.3s ease",
           }}
         />
->>>>>>> 3c157437f4a06160d3cb6071e74ad820c8ae12fd
       )}
 
-      {!item.image && item.category === "FESTIVAL CELEBRATION" && <FestivalLights />}
-      {!item.image && item.category === "COMPANY EVENT" && (
+      {/* Placeholders — show when no image or image failed */}
+      {(!item.image || imageError) && item.category === "FESTIVAL CELEBRATION" && (
+        <FestivalLights />
+      )}
+      {(!item.image || imageError) && item.category === "COMPANY EVENT" && (
         <>
           <BlueDots />
           <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -161,7 +153,7 @@ function GalleryCard({ item, isWide }) {
           </div>
         </>
       )}
-      {!item.image && item.category === "CERTIFICATION" && (
+      {(!item.image || imageError) && item.category === "CERTIFICATION" && (
         <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
           <CertificateIllustration />
         </div>
@@ -198,14 +190,12 @@ export default function Photo() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
-        /* Wide cards span 2 cols on desktop, full width on mobile */
         .gallery-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 16px;
         }
 
-        /* On mobile: single column, wide cards still span 1 col (full width) */
         @media (max-width: 600px) {
           .gallery-grid {
             grid-template-columns: 1fr !important;
@@ -215,7 +205,6 @@ export default function Photo() {
           }
         }
 
-        /* Tighten section padding on mobile */
         .photo-section {
           padding: 60px 24px 80px;
         }
