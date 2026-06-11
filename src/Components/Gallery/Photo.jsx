@@ -96,8 +96,19 @@ function ScreenIllustration() {
 function GalleryCard({ item, isWide }) {
   const { ref, active } = useTouchActive();
   const [hovered, setHovered] = useState(false);
+<<<<<<< HEAD
   const lifted = hovered || active;
   const config = CATEGORIES[item.category] || { bg: "#1a2c5b" };
+=======
+  const [imageError, setImageError] = useState(false); // 👈 Track if image fails to load
+  const config = CATEGORIES[item.category];
+
+  const renderPlaceholder = () => {
+    if (item.category === "CERTIFICATION") return <CertificateIllustration />;
+    if (item.category === "COMPANY EVENT") return <ScreenIllustration />;
+    return null; // Festival uses background decoration
+  };
+>>>>>>> 3c157437f4a06160d3cb6071e74ad820c8ae12fd
 
   return (
     <div
@@ -121,7 +132,24 @@ function GalleryCard({ item, isWide }) {
       }}
     >
       {item.image && (
+<<<<<<< HEAD
         <img src={item.image} alt={item.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity: lifted ? 0.85 : 0.75, transition:"opacity 0.3s ease" }}/>
+=======
+        <img
+          src={item.image}
+          alt={item.title}
+          onError={() => setImageError(true)} // 👈 Fallback if URL goes 404
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: hovered ? 0.85 : 0.75,
+            transition: "opacity 0.3s ease",
+          }}
+        />
+>>>>>>> 3c157437f4a06160d3cb6071e74ad820c8ae12fd
       )}
 
       {!item.image && item.category === "FESTIVAL CELEBRATION" && <FestivalLights />}
