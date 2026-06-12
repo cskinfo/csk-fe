@@ -11,9 +11,9 @@ import avHero from "../assets/ServicePagePhoto/AbSolutionHeroSection.jpg";
 import AbSolutionSecondSection from "../assets/ServicePagePhoto/AbSolutionSecondSection.jpg";
 // import trainingHero from "../assets/ServicePagePhoto/training-hero.jpg";
 import corporateTraning from "../assets/ServicePagePhoto/corporateTraning.jpg";
-import ArVRHeroImage from "../assets/ServicePagePhoto/ArVRHeroImagesss.png";
+import ArVRHeroImage from "../assets/ServicePagePhoto/ArVRHeroImagesss.jpg";
 
-import ArVrSecondSection from "../assets/ServicePagePhoto/ArVrSecondSections.png";
+import ArVrSecondSection from "../assets/ServicePagePhoto/ArVrSecondSections.jpg";
 import ArVrSectionThird from "../assets/ServicePagePhoto/ArVrSectionThird.jpg";
 
 
@@ -22,16 +22,16 @@ import ArVrSectionThird from "../assets/ServicePagePhoto/ArVrSectionThird.jpg";
 import networkManagementImg from "../assets/ServicePagePhoto/network-management.jpg";
 
 import datacenterillustration from "../assets/ServicePagePhoto/data-center-illustration.jpg";
-import hardwarerepair from "../assets/ServicePagePhoto/hardwarerepair.jpg";
+import hardwarerepair from "../assets/ServicePagePhoto/hardwarerepair.png";
 
 import systemintegrationsectiontwophoto from "../assets/ServicePagePhoto/systemintegrationsectiontwophoto.jpg";
 corporateTrainingSecond
-import corporateTrainingSecond from "../assets/ServicePagePhoto/corporateTrainingSecond.jpg";
+import corporateTrainingSecond from "../assets/ServicePagePhoto/CorporateTraingSecond.jpg";
 
 import AvSolutionSecond from "../assets/ServicePagePhoto/AvSolutionSecond.jpg";
 
 
-import CorporateTraingSecond from "../assets/ServicePagePhoto/CorporateTraingSecond.png";
+import CorporateTraingSecond from "../assets/ServicePagePhoto/CorporateTraingSecond.jpg";
 
 
 export const SERVICES_DATA = {

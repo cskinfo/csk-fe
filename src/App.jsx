@@ -13,6 +13,7 @@ import AdminPage from "./Pages/AdminPage";
 import ContactDetailsPage from "./Pages/ContactDetailsPage";
 import ScrollToTop from "./Components/ScrollToTop";
 import AboutPage from "./Components/About/Aboutpage";
+import TawkChat from "./components/TawkChat";
 
 
 function App() {
@@ -25,30 +26,31 @@ function App() {
            ka apna white background hai, parent ka dark override nahi karega
            kyunki StickyScroll apna bg-white set karta hai
       */}
-       <ScrollToTop />
+      <ScrollToTop />
+        <TawkChat />
       <div className="min-h-screen ">
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/Solution" element={<SolutionPage />} />
           <Route path="/Service" element={<ServicePage />} />
-           <Route path="/service/:slug" element={<ServiceDetail />} />
-           <Route path="/Service" element={<ServicePage />} />
-           <Route path="/CareerPage" element={<CareerPage />} />
-             <Route path="/GalleryPage" element={<GalleryPage/>} />
-              <Route path="/AdminPage" element={<AdminPage/>} />
-             <Route
-  path="/ContactPage"
-  element={<ContactDetailsPage />}
-/>
+          <Route path="/service/:slug" element={<ServiceDetail />} />
+          <Route path="/Service" element={<ServicePage />} />
+          <Route path="/CareerPage" element={<CareerPage />} />
+          <Route path="/GalleryPage" element={<GalleryPage />} />
+          <Route path="/AdminPage" element={<AdminPage />} />
+          <Route
+            path="/ContactPage"
+            element={<ContactDetailsPage />}
+          />
 
-      <Route path="/AboutPage" element={<AboutPage/>}/>
-             
-           
-           
-          
+          <Route path="/AboutPage" element={<AboutPage />} />
+
+
+
+
         </Routes>
-        <Footer/>
+        <Footer />
 
       </div>
     </BrowserRouter>

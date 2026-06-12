@@ -9,6 +9,8 @@ import LifeAtCSK from '../Components/Home/LifeAtCSK'
 import ClientPartnerSection from '../Components/Home/ClientPartnerSection'
 import PartnersSection from '../Components/Home/PartnersSection'
 import TrustedAlliances from '../Components/Home/TrustedAlliances'
+import PartnerSection from '../Components/Home/PartnerSection'
+import PartnerSecondSection from '../Components/Home/PartnerSecondSection'
 
 
 
@@ -24,6 +26,9 @@ const HomePage = () => {
       <LifeAtCSK/>
       {/* <ClientPartnerSection/> */}
       <TrustedAlliances/>  
+      <PartnerSection/>
+      {/* <PartnerSecondSection/> */}
+      
     </div>
   )
 }

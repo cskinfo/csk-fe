@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const styles = {
   footer: {
@@ -63,6 +64,7 @@ const styles = {
     cursor: "pointer",
     transition: "border-color 0.2s, color 0.2s",
     background: "transparent",
+    textDecoration: "none",
   },
   colHeading: {
     color: "#fff",
@@ -90,6 +92,7 @@ const styles = {
   link: {
     color: "#ccc",
     textDecoration: "none",
+    cursor: "pointer",
   },
   newsletterDesc: {
     fontSize: "12px",
@@ -148,6 +151,7 @@ const styles = {
     fontSize: "12px",
     color: "#556678",
     textDecoration: "none",
+    cursor: "pointer",
   },
   contactItem: {
     display: "flex",
@@ -177,88 +181,105 @@ const styles = {
 };
 
 const quickLinks = [
-  "Home",
-  "About Company",
-  "Our Services",
-  "Portfolio",
-  "Latest Blogs",
-  "Contact Us",
+  { label: "Home",          path: "/"            },
+  { label: "About Company", path: "/AboutPage"   },
+  { label: "Our Services",  path: "/Service"     },
+  { label: "Gallery",       path: "/GalleryPage" },
+  { label: "Contact Us",    path: "/ContactPage" },
 ];
 
 const services = [
-  "Managed Services",
-  "Cloud Security",
-  "Resource Augmentation",
-  "Digital Transformation",
-  "Energy & Power IT",
+  { label: "Infra Managed",      path: "/service/infra-managed"      },
+  { label: "IT Outsourcing",     path: "/service/it-outsourcing"     },
+  { label: "Break Fix Services", path: "/service/break-fix"          },
+  { label: "System Integration", path: "/service/system-integration" },
+  { label: "AV Solutions",       path: "/service/av-solutions"       },
+  { label: "AR & VR Devices",    path: "/service/ar-vr"              },
+  { label: "Corporate Training", path: "/service/corporate-training" },
 ];
 
-function SocialButton(props) {
-  const icon = props.icon;
+// ✅ Apne actual social media URLs yahan daalo
+const socialLinks = [
+  {
+    icon: "facebook",
+    href: "https://www.facebook.com/CSKITNOIDA/",
+    label: "Facebook",
+  },
+  {
+    icon: "instagram",
+    href: "https://www.instagram.com/csk_infotech/",
+    label: "Instagram",
+  },
+  {
+    icon: "linkedin",
+    href: "https://www.linkedin.com/company/csk-information-technology-pvt-ltd/?viewAsMember=true",
+    label: "LinkedIn",
+  },
+];
+
+function SocialButton({ icon, href, label }) {
   const [hovered, setHovered] = useState(false);
 
-  const style = Object.assign({}, styles.socialBtn, {
-    borderColor: hovered ? "#1a6bbd" : "#2a3d52",
-    color: hovered ? "#fff" : "#9aabb8",
-  });
-
-  const className = "ti ti-brand-" + icon;
 
   return (
-    <button
-      style={style}
-      onMouseEnter={function () { setHovered(true); }}
-      onMouseLeave={function () { setHovered(false); }}
-      onTouchStart={function () { setHovered(true); }}
-      onTouchEnd={function () { setHovered(false); }}
-      aria-label={icon}
+    <a
+    
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      style={{
+        ...styles.socialBtn,
+        borderColor: hovered ? "#1a6bbd" : "#2a3d52",
+        color: hovered ? "#fff" : "#9aabb8",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onTouchStart={() => setHovered(true)}
+      onTouchEnd={() => setHovered(false)}
     >
-      <i className={className} aria-hidden="true"></i>
-    </button>
+      <i className={`ti ti-brand-${icon}`} aria-hidden="true" />
+    </a>
   );
 }
 
-function NavLink(props) {
-  const label = props.label;
-  const href = props.href ? props.href : "#";
+function NavLink({ label, path }) {
+  const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
 
-  const linkStyle = Object.assign({}, styles.link, {
-    color: hovered ? "#fff" : "#ccc",
-  });
-
- return (
-  
+  return (
     <li style={styles.linkItem}>
-      <span style={styles.linkArrow}>{"\u203A"}</span>
-      <a
-        href={href}
-        style={linkStyle}
-        onMouseEnter={function () { setHovered(true); }}
-        onMouseLeave={function () { setHovered(false); }}
-        onTouchStart={function () { setHovered(true); }}
-        onTouchEnd={function () { setHovered(false); }}
+      <span style={styles.linkArrow}>›</span>
+      <span
+        style={{ ...styles.link, color: hovered ? "#fff" : "#ccc" }}
+        onClick={() => navigate(path)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onTouchStart={() => setHovered(true)}
+        onTouchEnd={() => setHovered(false)}
       >
         {label}
-      </a>
+      </span>
     </li>
   );
 }
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [btnHovered, setBtnHovered] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubscribe = function () {
+  
+  
+  
+  
+  
+  const handleSubscribe = () => {
     if (email.trim()) {
       alert("Subscribed with: " + email);
       setEmail("");
     }
   };
-
-  const newsletterBtnStyle = Object.assign({}, styles.newsletterBtn, {
-    background: btnHovered ? "#155ea8" : "#1a6bbd",
-  });
 
   return (
     <div>
@@ -271,87 +292,89 @@ export default function Footer() {
         rel="stylesheet"
       />
 
-      <style>
-        {
-          "@media (max-width: 1199px) {" +
-          ".footer-grid { grid-template-columns: 1fr 1fr 1fr !important; gap: 28px !important; }" +
-          ".footer-col-contact { grid-column: span 3 !important; }" +
-          "}" +
-          "@media (max-width: 767px) {" +
-          ".footer-grid { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }" +
-          ".footer-col-brand, .footer-col-contact { grid-column: span 2 !important; }" +
-          "}" +
-          "@media (max-width: 479px) {" +
-          ".footer-grid { grid-template-columns: 1fr !important; gap: 24px !important; }" +
-          ".footer-col-brand, .footer-col-contact { grid-column: span 1 !important; }" +
-          ".footer-bottom-inner { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }" +
-          "}"
+      <style>{`
+        @media (max-width: 1199px) {
+          .footer-grid { grid-template-columns: 1fr 1fr 1fr !important; gap: 28px !important; }
+          .footer-col-contact { grid-column: span 3 !important; }
         }
-      </style>
+        @media (max-width: 767px) {
+          .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
+          .footer-col-brand, .footer-col-contact { grid-column: span 2 !important; }
+        }
+        @media (max-width: 479px) {
+          .footer-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+          .footer-col-brand, .footer-col-contact { grid-column: span 1 !important; }
+          .footer-bottom-inner { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+        }
+      `}</style>
 
       <footer style={styles.footer}>
         <div className="footer-grid" style={styles.footerTop}>
 
+          {/* Brand */}
           <div className="footer-col-brand">
             <div style={styles.brandLogo}>
               <span style={styles.logoIcon}>CSK</span>
               <span style={styles.brandName}>Information Technology</span>
             </div>
             <p style={styles.brandDesc}>
-              Delivering quality from the ages of technology. We are experts in offshore software development, running parallel with technology trends.
+              Delivering quality from the ages of technology. We are experts in
+              offshore software development, running parallel with technology trends.
             </p>
             <div style={styles.socialIcons}>
-              <SocialButton icon="facebook" />
-              <SocialButton icon="twitter" />
-              <SocialButton icon="instagram" />
+              {socialLinks.map((s) => (
+                <SocialButton key={s.icon} icon={s.icon} href={s.href} label={s.label} />
+              ))}
             </div>
           </div>
 
+          {/* Quick Links */}
           <div>
             <h4 style={styles.colHeading}>Quick Links</h4>
             <ul style={styles.linkList}>
-              {quickLinks.map(function (label) {
-                return <NavLink key={label} label={label} />;
-              })}
+              {quickLinks.map((item) => (
+                <NavLink key={item.label} label={item.label} path={item.path} />
+              ))}
             </ul>
           </div>
 
+          {/* Services */}
           <div>
             <h4 style={styles.colHeading}>Our Services</h4>
             <ul style={styles.linkList}>
-              {services.map(function (label) {
-                return <NavLink key={label} label={label} />;
-              })}
+              {services.map((item) => (
+                <NavLink key={item.label} label={item.label} path={item.path} />
+              ))}
             </ul>
           </div>
 
+          {/* Contact */}
           <div className="footer-col-contact">
             <h4 style={styles.colHeading}>Get In Touch</h4>
-
             <div style={styles.contactItem}>
               <div style={styles.contactIcon}>
-                <i className="ti ti-map-pin" aria-hidden="true"></i>
+                <i className="ti ti-map-pin" aria-hidden="true" />
               </div>
               <p style={styles.contactText}>
-                Tower 4, Unit B-1206, 12th Floor, NX ONE, Tech Zone-IV, Gautam Buddha Nagar, Uttar Pradesh - 201306
+                Tower 4, Unit B-1206, 12th Floor, NX ONE, Tech Zone-IV,
+                Gautam Buddha Nagar, Uttar Pradesh - 201306
               </p>
             </div>
-
             <div style={styles.contactItem}>
               <div style={styles.contactIcon}>
-                <i className="ti ti-mail" aria-hidden="true"></i>
+                <i className="ti ti-mail" aria-hidden="true" />
               </div>
               <p style={styles.contactText}>info@cskinfotech.com</p>
             </div>
-
             <div style={styles.contactItem}>
               <div style={styles.contactIcon}>
-                <i className="ti ti-phone" aria-hidden="true"></i>
+                <i className="ti ti-phone" aria-hidden="true" />
               </div>
               <p style={styles.contactText}>+91 120 605 4621</p>
             </div>
           </div>
 
+          {/* Newsletter */}
           <div>
             <h4 style={styles.colHeading}>Newsletter</h4>
             <p style={styles.newsletterDesc}>
@@ -362,33 +385,47 @@ export default function Footer() {
                 type="email"
                 placeholder="Email address"
                 value={email}
-                onChange={function (e) { setEmail(e.target.value); }}
-                onKeyDown={function (e) { if (e.key === "Enter") { handleSubscribe(); } }}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSubscribe(); }}
                 style={styles.newsletterInput}
               />
               <button
                 onClick={handleSubscribe}
-                style={newsletterBtnStyle}
-                onMouseEnter={function () { setBtnHovered(true); }}
-                onMouseLeave={function () { setBtnHovered(false); }}
-                onTouchStart={function () { setBtnHovered(true); }}
-                onTouchEnd={function () { setBtnHovered(false); }}
+                style={{
+                  ...styles.newsletterBtn,
+                  background: btnHovered ? "#155ea8" : "#1a6bbd",
+                }}
+                onMouseEnter={() => setBtnHovered(true)}
+                onMouseLeave={() => setBtnHovered(false)}
+                onTouchStart={() => setBtnHovered(true)}
+                onTouchEnd={() => setBtnHovered(false)}
                 aria-label="Subscribe"
               >
-                <i className="ti ti-arrow-right" aria-hidden="true"></i>
+                <i className="ti ti-arrow-right" aria-hidden="true" />
               </button>
             </div>
           </div>
 
         </div>
 
+        {/* Bottom bar */}
         <div className="footer-bottom-inner" style={styles.footerBottom}>
           <p style={styles.copyright}>
             (c) 2026 CSK Information Technology Pvt Ltd. All rights reserved.
           </p>
           <div style={styles.bottomLinks}>
-            <a href="#" style={styles.bottomLink}>Privacy Policy</a>
-            <a href="#" style={styles.bottomLink}>Terms of Service</a>
+            <span
+              onClick={() => navigate("/privacy-policy")}
+              style={styles.bottomLink}
+            >
+              Privacy Policy
+            </span>
+            <span
+              onClick={() => navigate("/terms")}
+              style={styles.bottomLink}
+            >
+              Terms of Service
+            </span>
           </div>
         </div>
       </footer>

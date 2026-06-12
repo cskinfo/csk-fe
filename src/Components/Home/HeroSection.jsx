@@ -45,9 +45,9 @@ export default function HeroSection() {
     Explore Services
   </Link>
 
-  <button className="secondary-btn">
+  <Link to ="/ContactPage" className="secondary-btn flex justify-center place-items-center ">
     Contact Us
-  </button>
+  </Link>
 </div>
         </div>
 

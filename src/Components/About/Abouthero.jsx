@@ -84,7 +84,6 @@ function OrbCanvas() {
 
 export default function AboutHero() {
   usePreloadImage(heroBg);
-  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <>
@@ -111,15 +110,26 @@ export default function AboutHero() {
           .about-hero { min-height: 280px; }
           .about-hero-text { padding: 40px 20px !important; }
         }
+
+        /* Text entrance animation */
+        @keyframes heroFadeUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .about-hero-title {
+          animation: heroFadeUp 0.8s cubic-bezier(.22,.68,0,1.1) both;
+        }
+        .about-hero-desc {
+          animation: heroFadeUp 0.8s cubic-bezier(.22,.68,0,1.1) 0.15s both;
+        }
       `}</style>
 
       <section className="about-hero">
-        {/* Background photo — <img> so preload works correctly */}
+        {/* Background photo — <img> so preload works correctly, renders instantly */}
         <img
           src={heroBg}
           alt=""
           aria-hidden="true"
-          onLoad={() => setImgLoaded(true)}
           style={{
             position: "absolute",
             inset: 0,
@@ -128,8 +138,6 @@ export default function AboutHero() {
             objectFit: "cover",
             objectPosition: "center",
             zIndex: 1,
-            opacity: imgLoaded ? 1 : 0,
-            transition: "opacity 0.5s ease",
           }}
         />
         {/* Dark overlay — always visible so text is readable even before image loads */}
@@ -158,6 +166,7 @@ export default function AboutHero() {
           }}
         >
           <h1
+            className="about-hero-title"
             style={{
               fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
               fontWeight: 800,
@@ -172,6 +181,7 @@ export default function AboutHero() {
             through Intelligent Design.
           </h1>
           <p
+            className="about-hero-desc"
             style={{
               fontSize: "clamp(0.875rem, 2.2vw, 1rem)",
               color: "rgba(200,225,245,0.65)",

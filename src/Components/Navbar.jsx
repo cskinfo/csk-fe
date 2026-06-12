@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/Logo/logo.png";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -25,7 +25,7 @@ const NavItem = ({ item, active, onActivate }) => {
       <NavLink
   to={item.path}
   className={({ isActive }) =>
-    `flex items-center gap-1 px-3.5 py-2 text-[13.5px] font-medium border-b-2 ${
+    `flex items-center gap-1 px-3.5 py-2 text-[13.5px] font-medium border-b-2 transition-colors duration-200 ${
       isActive
         ? "text-[#1a6bbd] border-[#1a6bbd]"
         : "text-[#222] border-transparent"
@@ -42,6 +42,14 @@ export default function Navbar() {
   const [activeLink, setActiveLink] = useState("Home");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [contactHovered, setContactHovered] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
@@ -57,18 +65,30 @@ export default function Navbar() {
         rel="stylesheet"
       />
 
-      <nav className="sticky top-0 z-[1000] bg-white border-b border-[#e8edf2] shadow-[0_1px_8px_rgba(0,0,0,0.06)] font-[Poppins]">
-        <div className="max-w-[1200px] mx-auto px-6 h-[70px] flex items-center justify-between gap-6">
+      <nav
+        className={`sticky top-0 z-[1000] bg-white border-b border-[#e8edf2] font-[Poppins] transition-all duration-300 ${
+          scrolled
+            ? "shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
+            : "shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
+        }`}
+      >
+        <div
+          className={`max-w-[1200px] mx-auto px-6 flex items-center justify-between gap-6 transition-[padding] duration-300 ease-out ${
+            scrolled ? "py-1.5" : "py-[4px]"
+          }`}
+        >
           
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 shrink-0"
+            className="flex items-center shrink-0 w-[150px]"
           >
             <img
               src={logo}
               alt="CSK Information Technology"
-              className="h-[60px] w-auto object-contain"
+              className={`w-auto object-contain transition-[height] duration-300 ease-out ${
+                scrolled ? "h-[50px]" : "h-[60px]"
+              }`}
             />
           </Link>
 
@@ -93,7 +113,7 @@ export default function Navbar() {
     { icon: "brand-instagram", link: "https://www.instagram.com/csk_infotech?igsh=MXM1azByaDVueXFxbA==" },
     { icon: "headset", link: "https://support.cskinfotech.com/login.php" }, // Help Desk
    
-    { icon: "brand-facebook", link: "#" },
+    { icon: "brand-facebook", link: "https://www.facebook.com/CSKITNOIDA/" },
   ].map((item) => (
     <a
       key={item.icon}
@@ -146,7 +166,7 @@ export default function Navbar() {
     }
   `}
 >
-  <div className="px-6 py-4">
+  <div className="px-6 py-4`">
 
     {navLinks.map((item) => (
       <NavLink

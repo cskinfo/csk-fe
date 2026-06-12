@@ -48,6 +48,86 @@ const CSS = `
     content:''; display:block; width:24px; height:2px;
     background:#174A97; border-radius:2px;
   }
+
+  /* ── Responsive: layout helpers ─────────────────────────────────────────── */
+  .sd-root { overflow-x: hidden; }
+
+  .sd-container {
+    max-width: 1200px; margin: 0 auto; padding: 0 32px; box-sizing: border-box;
+  }
+
+  .sd-section-pad { padding: 72px 0; }
+
+  .sd-split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .sd-card-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .sd-stats-row {
+    display: grid;
+    gap: 1px;
+    background: rgba(23,74,151,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sd-diagram-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sd-diagram-wrap > * {
+    max-width: 100%;
+  }
+
+  /* Tablet */
+  @media (max-width: 968px) {
+    .sd-container { padding: 0 24px; }
+    .sd-section-pad { padding: 56px 0; }
+    .sd-split-grid {
+      grid-template-columns: 1fr !important;
+      direction: ltr !important;
+      gap: 36px;
+    }
+    .sd-card-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .sd-stats-row {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .sd-container { padding: 0 18px; }
+    .sd-section-pad { padding: 44px 0; }
+    .sd-split-grid { gap: 28px; }
+    .sd-card-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .sd-stats-row {
+      grid-template-columns: 1fr !important;
+    }
+    .sd-hero-wrap {
+      min-height: 320px !important;
+      padding: 90px 18px 32px !important;
+    }
+    .sd-back-btn {
+      top: 16px !important;
+      left: 16px !important;
+      padding: 7px 12px !important;
+      font-size: 11px !important;
+    }
+    .sd-we-believe { padding: 48px 18px !important; }
+  }
 `;
 
 function injectCSS() {
@@ -57,6 +137,23 @@ function injectCSS() {
   el.id = "sd-styles";
   el.textContent = CSS;
   document.head.appendChild(el);
+}
+
+/* ── Responsive helper hook ──────────────────────────────────────────────── */
+function useIsMobile(breakpoint = 640) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= breakpoint : false
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onResize = () => setIsMobile(window.innerWidth <= breakpoint);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+
+  return isMobile;
 }
 
 /* ── Colour palette ─────────────────────────────────────────────────────────── */
@@ -136,6 +233,7 @@ function ServerDiagram() {
       background: WHITE, border: `1px solid rgba(23,74,151,0.10)`,
       borderRadius: 14, padding: "20px 24px",
       boxShadow: "0 4px 20px rgba(23,74,151,0.08)",
+      boxSizing: "border-box",
     }}>
       {/* Center box */}
       <div style={{
@@ -147,6 +245,7 @@ function ServerDiagram() {
           width: 36, height: 36, borderRadius: 8,
           background: `rgba(23,74,151,0.08)`,
           display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0,
         }}>
           <Icon name="monitor" size={18} color={BLUE} />
         </div>
@@ -202,13 +301,13 @@ function SystemsIntegrationDiagram() {
       display: "flex", alignItems: "center", justifyContent: "center",
       padding: "20px 0",
     }}>
-      <div style={{ position: "relative", width: 320, height: 280 }}>
+      <div style={{ position: "relative", width: "100%", maxWidth: 320, aspectRatio: "320 / 280" }}>
         {/* Center hub */}
         <div style={{
           position: "absolute",
           left: "50%", top: "40%",
           transform: "translate(-50%,-50%)",
-          width: 110, height: 110, borderRadius: "50%",
+          width: "34%", height: "34%", minWidth: 80, minHeight: 80, borderRadius: "50%",
           background: "linear-gradient(135deg,#174A97,#0B1F3A)",
           border: "3px solid #174A97",
           display: "flex", flexDirection: "column",
@@ -251,7 +350,7 @@ function SystemsIntegrationDiagram() {
           position: "absolute", inset: 0,
           width: "100%", height: "100%",
           zIndex: 0,
-        }}>
+        }} viewBox="0 0 320 280" preserveAspectRatio="none">
           {nodes.map((n, i) => (
             <line key={i}
               x1={160} y1={112}
@@ -290,10 +389,11 @@ function ManagedServicesDiagram() {
       borderRadius: 14, padding: "20px",
       boxShadow: "0 4px 20px rgba(23,74,151,0.08)",
       overflow: "hidden",
+      boxSizing: "border-box",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {/* Left column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, minWidth: 0 }}>
           {nodes.map((n, i) => (
             <div key={i} style={{
               background: n.color + "15", border: `1px solid ${n.color}40`,
@@ -320,7 +420,7 @@ function ManagedServicesDiagram() {
         </div>
 
         {/* Right column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, minWidth: 0 }}>
           {rightNodes.map((n, i) => (
             <div key={i} style={{
               background: n.color + "15", border: `1px solid ${n.color}40`,
@@ -347,16 +447,11 @@ function SectionImageSplit({ section, index, reverse = false }) {
   }, []);
 
   return (
-    <div ref={ref} style={{
+    <div ref={ref} className="sd-section-pad" style={{
       background: index % 2 === 0 ? WHITE : LBBLUE,
-      padding: "72px 0",
     }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 60,
-          alignItems: "center",
+      <div className="sd-container">
+        <div className="sd-split-grid" style={{
           direction: reverse ? "rtl" : "ltr",
         }}>
           {/* Text side */}
@@ -403,14 +498,14 @@ function SectionImageSplit({ section, index, reverse = false }) {
             opacity: vis ? undefined : 0,
           }}>
             {section.diagramType === "serverDiagram" ? (
-              <ServerDiagram />
+              <div className="sd-diagram-wrap"><ServerDiagram /></div>
             ) : section.diagramType === "managedServicesDiagram" ? (
-              <ManagedServicesDiagram /> 
+              <div className="sd-diagram-wrap"><ManagedServicesDiagram /></div>
             ) : section.diagramType === "diagnosticsDashboard" ? (
-               <DiagnosticsDashboard />
-            
+               <div className="sd-diagram-wrap"><DiagnosticsDashboard /></div>
+
             ): section.diagramType === "systemsIntegrationDiagram" ? (
-   <SystemsIntegrationDiagram />
+   <div className="sd-diagram-wrap"><SystemsIntegrationDiagram /></div>
 ):
              (
               <div style={{
@@ -468,6 +563,7 @@ function DiagnosticsDashboard() {
       borderRadius: 14,
       overflow: "hidden",
       boxShadow: "0 8px 32px rgba(11,31,58,0.3)",
+      boxSizing: "border-box",
     }}>
       {/* Title bar */}
       <div style={{
@@ -477,7 +573,7 @@ function DiagnosticsDashboard() {
       }}>
         {/* Traffic lights */}
         {["#FF5F57","#FFBD2E","#28CA41"].map((c,i) => (
-          <div key={i} style={{ width:10, height:10, borderRadius:"50%", background:c }}/>
+          <div key={i} style={{ width:10, height:10, borderRadius:"50%", background:c, flexShrink: 0 }}/>
         ))}
         <span style={{
           fontSize: 12, fontWeight: 600, color: "#A9D2F8E5",
@@ -562,11 +658,10 @@ function SectionCardGrid({ section, index }) {
   }, []);
 
   return (
-    <div ref={ref} style={{
+    <div ref={ref} className="sd-section-pad" style={{
       background: index % 2 === 0 ? WHITE : LBBLUE,
-      padding: "72px 0",
     }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
+      <div className="sd-container">
         <div style={{
           animation: vis ? "sdFadeUp .6s ease both" : "none",
           opacity: vis ? undefined : 0,
@@ -585,11 +680,8 @@ function SectionCardGrid({ section, index }) {
           )}
         </div>
 
-        <div style={{
-          display: "grid",
+        <div className="sd-card-grid" style={{
           gridTemplateColumns: `repeat(${section.cards.length}, 1fr)`,
-
-          gap: 20,
         }}>
           {section.cards.map((card, ci) => (
             <div key={ci} className="sd-card" style={{
@@ -637,11 +729,10 @@ function SectionCardGridStats({ section, index }) {
   }, []);
 
   return (
-    <div ref={ref} style={{
+    <div ref={ref} className="sd-section-pad" style={{
       background: index % 2 === 0 ? WHITE : LBBLUE,
-      padding: "72px 0",
     }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
+      <div className="sd-container">
         {/* Header */}
         <div style={{
           animation: vis ? "sdFadeUp .6s ease both" : "none",
@@ -697,13 +788,8 @@ function SectionCardGridStats({ section, index }) {
 
         {/* Stats Row */}
         {section.stats && (
-          <div style={{
-            display: "grid",
+          <div className="sd-stats-row" style={{
             gridTemplateColumns: `repeat(${section.stats.length}, 1fr)`,
-            gap: 1,
-            background: "rgba(23,74,151,0.08)",
-            borderRadius: 14,
-            overflow: "hidden",
           }}>
             {section.stats.map((stat, si) => (
               <div key={si} className="sd-stat-card" style={{
@@ -751,7 +837,7 @@ function WeBelieveBanner({ data }) {
   }, []);
 
   return (
-    <div ref={ref} style={{
+    <div ref={ref} className="sd-we-believe" style={{
       background: "linear-gradient(135deg,#0B1F3A 0%,#174A97 60%,#1A4A8A 100%)",
       padding: "72px 32px",
       textAlign: "center",
@@ -801,10 +887,13 @@ function WeBelieveBanner({ data }) {
 /* ── Hero Section ────────────────────────────────────────────────────────────── */
 function HeroSection({ data, onBack }) {
 
+  const isMobile = useIsMobile(640);
+
   const defaultOverlay =
   "linear-gradient(to bottom, rgba(11,31,58,0.82) 0%, rgba(11,31,58,0.65) 100%)";
   return (
     <div
+  className="sd-hero-wrap"
   style={{
     background: `
       ${data.heroOverlay || defaultOverlay},
@@ -819,6 +908,7 @@ function HeroSection({ data, onBack }) {
     alignItems: "center",
     textAlign: "center",
     position: "relative",
+    boxSizing: "border-box",
   }}
 >
       {/* Back button */}
@@ -831,9 +921,10 @@ function HeroSection({ data, onBack }) {
         color: "rgba(255,255,255,0.75)", fontSize: 12, fontWeight: 600,
         fontFamily: "'Manrope',sans-serif", letterSpacing: ".04em",
         transition: "all .2s",
+        zIndex: 2,
       }}>
         <Icon name="back" size={14} color="currentColor" />
-        All Services
+        {isMobile ? "All" : "All Services"}
       </button>
 
       <div style={{ maxWidth: 760, animation: "sdFadeUp .8s ease .1s both" }}>
@@ -902,6 +993,8 @@ export default function ServiceDetail() {
           justifyContent: "center",
           background: LBBLUE,
           fontFamily: "'Manrope',sans-serif",
+          padding: "0 20px",
+          textAlign: "center",
         }}
       >
         <div style={{ textAlign: "center" }}>
@@ -944,6 +1037,7 @@ export default function ServiceDetail() {
 
   return (
     <div
+      className="sd-root"
       style={{
         background: LBBLUE,
         fontFamily: "'Manrope',sans-serif",
