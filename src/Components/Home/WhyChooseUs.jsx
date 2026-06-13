@@ -1,388 +1,364 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Building2, UserCheck, Award, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const AnimatedCounter = ({ value, duration = 2000 }) => {
+const AnimatedCounter = ({ target, suffix = '' }) => {
   const [count, setCount] = useState(0);
-  const targetRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  const target = parseInt(value.replace(/[^0-9]/g, '')) || 0;
-  const suffix = value.replace(/[0-9]/g, '');
+  const ref = useRef(null);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (targetRef.current) observer.unobserve(targetRef.current);
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (targetRef.current) observer.observe(targetRef.current);
-    return () => { if (targetRef.current) observer.unobserve(targetRef.current); };
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setStarted(true); obs.unobserve(ref.current); }
+    }, { threshold: 0.1 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
   }, []);
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (!started) return;
     let startTime = null;
-    let animationFrameId;
-    const animate = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const progress = timestamp - startTime;
-      const percentage = Math.min(progress / duration, 1);
-      const easeOut = percentage === 1 ? 1 : 1 - Math.pow(2, -10 * percentage);
-      setCount(Math.floor(target * easeOut));
-      if (progress < duration) {
-        animationFrameId = requestAnimationFrame(animate);
-      } else {
-        setCount(target);
-      }
+    const dur = 1800;
+    const frame = (ts) => {
+      if (!startTime) startTime = ts;
+      const p = Math.min((ts - startTime) / dur, 1);
+      const ease = 1 - Math.pow(2, -10 * p);
+      setCount(Math.floor(target * ease));
+      if (p < 1) requestAnimationFrame(frame);
+      else setCount(target);
     };
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [target, duration, isVisible]);
+    requestAnimationFrame(frame);
+  }, [started, target]);
 
-  return <span ref={targetRef}>{count}{suffix}</span>;
+  return <span ref={ref}>{count}{suffix}</span>;
 };
 
-const StatCard = ({ icon: Icon, value, label, index }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const cardRef = useRef(null);
-  const wrapperRef = useRef(null);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+const StatCard = ({ icon: Icon, target, suffix, label, index }) => {
+  const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-  const [transform, setTransform] = useState('');
+  const [tilt, setTilt] = useState('');
+  const cardRef = useRef(null);
+  const wrapRef = useRef(null);
+  const isTouch = useRef(false);
 
   useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (wrapperRef.current) observer.unobserve(wrapperRef.current);
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (wrapperRef.current) observer.observe(wrapperRef.current);
-    return () => { if (wrapperRef.current) observer.unobserve(wrapperRef.current); };
+    isTouch.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVisible(true); obs.unobserve(wrapRef.current); }
+    }, { threshold: 0.1 });
+    if (wrapRef.current) obs.observe(wrapRef.current);
+    return () => obs.disconnect();
   }, []);
 
   const handleMouseMove = (e) => {
-    if (isTouchDevice || !cardRef.current) return;
+    if (isTouch.current || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     setMousePos({ x, y });
-    const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -15;
-    const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 15;
-    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`);
+    const rx = ((y - rect.height / 2) / (rect.height / 2)) * -10;
+    const ry = ((x - rect.width / 2) / (rect.width / 2)) * 10;
+    setTilt(`perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.04,1.04,1.04)`);
   };
 
   const handleMouseLeave = () => {
-    if (isTouchDevice) return;
-    setIsHovered(false);
-    setTransform(`perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`);
+    setHovered(false);
+    setTilt('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)');
+  };
+
+  // SVG icons inline (no external dependency)
+  const icons = {
+    building: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 21h18M3 7l9-4 9 4M4 21V7m16 14V7M9 21v-4a3 3 0 016 0v4"/>
+      </svg>
+    ),
+    users: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+      </svg>
+    ),
+    award: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+      </svg>
+    ),
+    check: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    ),
   };
 
   return (
     <div
-      ref={wrapperRef}
-      className={`transition-all duration-1000 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-        isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-24 scale-90'
-      }`}
-      style={{ transitionDelay: `${index * 150}ms` }}
+      ref={wrapRef}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.94)',
+        transition: `opacity 0.8s cubic-bezier(0.34,1.56,0.64,1) ${index * 130}ms, transform 0.8s cubic-bezier(0.34,1.56,0.64,1) ${index * 130}ms`,
+      }}
     >
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
-        onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
+        onMouseEnter={() => !isTouch.current && setHovered(true)}
         onMouseLeave={handleMouseLeave}
-        className="relative flex flex-col items-center p-4 sm:p-6 lg:p-8 cursor-pointer rounded-3xl bg-white/40 backdrop-blur-md border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(59,130,246,0.15)] transition-all duration-300 ease-out w-full h-full"
         style={{
-          transform: (!isTouchDevice && transform) ? transform : 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
-          transformStyle: 'preserve-3d'
+          position: 'relative',
+          aspectRatio: '1 / 1',
+          borderRadius: '20px',
+          background: '#ffffff',
+          border: '1px solid #e8e8ec',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '10px',
+          overflow: 'hidden',
+          cursor: 'pointer',
+          boxShadow: hovered ? '0 16px 36px rgba(37,99,235,0.14)' : '0 4px 18px rgba(0,0,0,0.05)',
+          transform: tilt || 'perspective(1000px)',
+          transformStyle: 'preserve-3d',
+          transition: 'box-shadow 0.3s, border-color 0.3s',
+          borderColor: hovered ? 'rgba(37,99,235,0.25)' : '#e8e8ec',
         }}
       >
-        <div
-          className="absolute inset-0 rounded-3xl pointer-events-none transition-opacity duration-300 z-0"
-          style={{
-            opacity: isHovered ? 1 : 0,
-            background: `radial-gradient(300px circle at ${mousePos.x}px ${mousePos.y}px, rgba(59, 130, 246, 0.15), transparent 40%)`
-          }}
-        />
+        {/* Mouse spotlight */}
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: '20px', pointerEvents: 'none',
+          opacity: hovered ? 1 : 0, transition: 'opacity 0.3s',
+          background: `radial-gradient(260px circle at ${mousePos.x}px ${mousePos.y}px, rgba(37,99,235,0.06), transparent 60%)`,
+        }} />
 
-        <div className="relative z-10 flex flex-col items-center w-full" style={{ transform: 'translateZ(40px)' }}>
-          <div className="relative mb-3 sm:mb-5 lg:mb-6">
-            <div className={`absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-40' : ''}`}></div>
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-white to-blue-50 rounded-full flex items-center justify-center border border-white shadow-lg text-blue-500 transition-transform duration-500">
-              <Icon className="w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8 stroke-[1.5]" />
-            </div>
+        {/* Icon */}
+        <div style={{ position: 'relative', zIndex: 2, transform: 'translateZ(30px)' }}>
+          <div className="wcu-icon-circle" style={{
+            borderRadius: '50%',
+            background: '#f3f6fd',
+            border: '1px solid #e8edfa',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            {icons[Icon]}
           </div>
-
-          <h3 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800 mb-1 sm:mb-3 drop-shadow-sm">
-            <AnimatedCounter value={value} />
-          </h3>
-          <p className="text-[9px] sm:text-[10px] lg:text-[11px] text-gray-500 font-bold tracking-widest uppercase text-center leading-relaxed">
-            {label}
-          </p>
         </div>
+
+        {/* Value */}
+        <p className="wcu-value" style={{ position: 'relative', zIndex: 2, fontWeight: 800, color: '#111111', margin: 0, transform: 'translateZ(30px)' }}>
+          <AnimatedCounter target={target} suffix={suffix} />
+        </p>
+
+        {/* Label */}
+        <p className="wcu-label" style={{
+          position: 'relative', zIndex: 2, color: '#444444',
+          fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+          textAlign: 'center', lineHeight: 1.6, margin: 0,
+          transform: 'translateZ(20px)',
+        }}>
+          {label}
+        </p>
       </div>
     </div>
   );
 };
 
-const IsoBadge = ({ standard }) => (
-  <div className="group relative w-full aspect-square p-2 bg-gradient-to-br from-blue-300 via-[#8bc4f5] to-blue-500 flex items-center justify-center overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer shine-effect">
-    <div className="absolute inset-0 opacity-40 group-hover:opacity-80 transition-opacity duration-500">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-4 bg-white/40 rotate-45 blur-md group-hover:rotate-[225deg] transition-all duration-[1500ms] ease-in-out" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-4 bg-white/40 -rotate-45 blur-md group-hover:rotate-[135deg] transition-all duration-[1500ms] ease-in-out" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[150%] bg-white/20 blur-xl group-hover:animate-pulse" />
-    </div>
-
-    <div className="relative w-full h-full max-w-[220px] max-h-[220px] drop-shadow-xl transition-transform duration-500 group-hover:scale-[1.02]">
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-        <defs>
-          <linearGradient id="outer-ring" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#6ebaf5"/>
-            <stop offset="20%" stopColor="#1e58a8"/>
-            <stop offset="80%" stopColor="#0b2e61"/>
-            <stop offset="100%" stopColor="#3b82f6"/>
-          </linearGradient>
-          <linearGradient id="silver-ring" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#9ca3af"/>
-            <stop offset="30%" stopColor="#f3f4f6"/>
-            <stop offset="50%" stopColor="#ffffff"/>
-            <stop offset="80%" stopColor="#e5e7eb"/>
-            <stop offset="100%" stopColor="#6b7280"/>
-          </linearGradient>
-          <radialGradient id="center-blue" cx="50%" cy="40%" r="60%">
-            <stop offset="0%" stopColor="#3b82f6"/>
-            <stop offset="50%" stopColor="#1e40af"/>
-            <stop offset="100%" stopColor="#0f172a"/>
-          </radialGradient>
-          <path id={`top-curve-${standard}`} d="M 28 103 A 72 72 0 0 1 172 103" fill="transparent" />
-          <path id={`bottom-curve-${standard}`} d="M 172 97 A 72 72 0 0 1 28 97" fill="transparent" />
-        </defs>
-        <circle cx="100" cy="100" r="96" fill="url(#outer-ring)" className="origin-center transition-transform duration-1000 ease-in-out group-hover:rotate-180" />
-        <circle cx="100" cy="100" r="92" fill="rgba(255,255,255,0.2)" />
-        <circle cx="100" cy="100" r="88" fill="url(#silver-ring)" stroke="#0b2e61" strokeWidth="1" className="origin-center transition-transform duration-[1500ms] ease-in-out group-hover:-rotate-180" />
-        <circle cx="100" cy="100" r="62" fill="url(#center-blue)" stroke="#cbd5e1" strokeWidth="2" />
-        <circle cx="100" cy="100" r="60" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-        <path d="M 100 40 A 30 60 0 0 0 100 160 A 30 60 0 0 0 100 40" fill="transparent" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-        <path d="M 40 100 Q 100 130 160 100 Q 100 70 40 100" fill="transparent" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-        <text fill="#0f294d" fontSize="21" fontWeight="900" fontFamily="Impact, Arial Black, sans-serif" letterSpacing="1.5">
-          <textPath href={`#top-curve-${standard}`} startOffset="50%" textAnchor="middle">CERTIFIED</textPath>
-        </text>
-        <text fill="#0f294d" fontSize="21" fontWeight="900" fontFamily="Impact, Arial Black, sans-serif" letterSpacing="1.5">
-          <textPath href={`#bottom-curve-${standard}`} startOffset="50%" textAnchor="middle">COMPANY</textPath>
-        </text>
-        <text x="100" y="93" textAnchor="middle" fill="#ffffff" fontSize="40" fontWeight="900" fontFamily="Arial, sans-serif">ISO</text>
-        <text x="100" y="116" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold" fontFamily="Arial, sans-serif" letterSpacing="0.5">{standard}</text>
-        <path d="M 42 100 A 58 58 0 0 1 158 100 A 48 30 0 0 0 42 100 Z" fill="rgba(255,255,255,0.3)" />
-      </svg>
-    </div>
-  </div>
-);
-
-const IsoBadgeCarousel = ({ standards }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const touchStartX = useRef(null);
+const ParallaxHero = () => {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const sectionRef = useRef(null);
 
   useEffect(() => {
-    function check() { setIsMobile(window.innerWidth < 640); }
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const dist = (rect.top + rect.height / 2) - window.innerHeight / 2;
+      setOffset(prev => ({ ...prev, y: dist * 0.18 }));
+    };
+    const handleMouse = (e) => {
+      const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+      setOffset({ x: (e.clientX - cx) * 0.025, y: (e.clientY - cy) * 0.018 });
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('mousemove', handleMouse, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouse);
+    };
   }, []);
 
-  useEffect(() => {
-    if (isHovered) return;
-    const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % standards.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [isHovered, standards.length]);
-
-  const handleNext = () => setActiveIndex((prev) => (prev + 1) % standards.length);
-  const handlePrev = () => setActiveIndex((prev) => (prev - 1 + standards.length) % standards.length);
-
-  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
-  const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) { diff > 0 ? handleNext() : handlePrev(); }
-    touchStartX.current = null;
-  };
-
-  const getSlideStyle = (index) => {
-    const diff = (index - activeIndex + standards.length) % standards.length;
-    let translateX = '0';
-    let scale = 1;
-    let opacity = 1;
-    let zIndex = 30;
-    let rotateY = '0deg';
-
-    const sideOffset = isMobile ? '68%' : '85%';
-    const sideScale = isMobile ? 0.65 : 0.8;
-    const sideOpacity = isMobile ? 0.35 : 0.6;
-
-    if (diff === 1) {
-      translateX = sideOffset;
-      scale = sideScale;
-      opacity = sideOpacity;
-      zIndex = 20;
-      rotateY = '-15deg';
-    } else if (diff === standards.length - 1) {
-      translateX = `-${sideOffset}`;
-      scale = sideScale;
-      opacity = sideOpacity;
-      zIndex = 20;
-      rotateY = '15deg';
-    } else if (diff !== 0) {
-      scale = 0.5;
-      opacity = 0;
-      zIndex = 10;
-    }
-
-    return {
-      transform: `translate(-50%, -50%) translateX(${translateX}) rotateY(${rotateY}) scale(${scale})`,
-      opacity,
-      zIndex
-    };
-  };
-
   return (
-    <div
-      className="relative w-full flex items-center justify-center overflow-hidden py-2"
-      style={{ perspective: '1000px', height: isMobile ? '260px' : '450px' }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {standards.map((std, index) => (
-        <div
-          key={std}
-          className="absolute top-1/2 left-1/2 transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)] cursor-pointer drop-shadow-2xl"
-          style={{ ...getSlideStyle(index), width: isMobile ? '170px' : '320px' }}
-          onClick={() => setActiveIndex(index)}
-        >
-          <IsoBadge standard={std} />
-        </div>
+    <div ref={sectionRef} className="wcu-hero" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: '8px' }}>
+      {/* Blobs */}
+      {[
+        { w: 280, h: 280, top: '-50px', right: '-50px', color: 'rgba(37,99,235,0.06)', mx: -0.6, my: -0.5 },
+        { w: 220, h: 220, bottom: '-30px', left: '-30px', color: 'rgba(37,99,235,0.05)', mx: 0.5, my: 0.6 },
+        { w: 180, h: 180, top: '30%', left: '55%', color: 'rgba(37,99,235,0.04)', mx: 0.8, my: 0.3 },
+      ].map((b, i) => (
+        <div key={i} style={{
+          position: 'absolute', width: b.w, height: b.h,
+          top: b.top, right: b.right, bottom: b.bottom, left: b.left,
+          borderRadius: '50%', pointerEvents: 'none',
+          background: `radial-gradient(circle, ${b.color} 0%, transparent 70%)`,
+          transform: `translate(${offset.x * b.mx}px, ${offset.y * b.my}px)`,
+        }} />
       ))}
 
-      {/* Left Arrow */}
-      <button
-        onClick={handlePrev}
-        className="absolute left-0 sm:left-12 top-1/2 -translate-y-1/2 z-40 p-2 sm:p-3 bg-white/90 backdrop-blur text-blue-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:bg-blue-50 active:scale-95 hover:scale-110 transition-all border border-blue-100/50"
-      >
-        <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
-      </button>
+      {/* BG text */}
+      <div className="wcu-bg-text" style={{
+        position: 'absolute',
+        fontWeight: 900, color: 'rgba(0,0,0,0.035)',
+        letterSpacing: '-4px', userSelect: 'none', pointerEvents: 'none', whiteSpace: 'nowrap',
+        transform: `translate(${offset.x * -1.4}px, ${offset.y * -0.8}px)`,
+      }}>
+        WHY CHOOSE US
+      </div>
 
-      {/* Right Arrow */}
-      <button
-        onClick={handleNext}
-        className="absolute right-0 sm:right-12 top-1/2 -translate-y-1/2 z-40 p-2 sm:p-3 bg-white/90 backdrop-blur text-blue-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:bg-blue-50 active:scale-95 hover:scale-110 transition-all border border-blue-100/50"
-      >
-        <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-3 z-40">
-        {standards.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setActiveIndex(idx)}
-            className={`h-2.5 rounded-full transition-all duration-500 ease-out ${
-              idx === activeIndex
-                ? 'bg-blue-600 w-8 shadow-sm'
-                : 'bg-blue-200 hover:bg-blue-400 w-2.5'
-            }`}
-          />
-        ))}
+      {/* Foreground */}
+      <div className="wcu-hero-content" style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
+          background: '#ffffff', border: '1px solid #e0e0e6',
+          borderRadius: '999px', padding: '5px 16px', fontSize: '13px',
+          color: '#2563eb', fontWeight: 600, marginBottom: '16px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+        }}>
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563eb', display: 'inline-block' }} />
+          Why Choose Us
+        </div>
+        <h2 className="wcu-heading" style={{ fontWeight: 900, color: '#111111', margin: '0 0 12px', lineHeight: 1.1, letterSpacing: '-1px' }}>
+          Why Choose Us
+        </h2>
+        <p className="wcu-subtext" style={{ color: '#555555', maxWidth: '500px', margin: '0 auto', lineHeight: 1.7 }}>
+          With industry expertise, innovation-driven strategies, and nationwide support capabilities, we help businesses achieve reliable and sustainable digital transformation.
+        </p>
       </div>
     </div>
   );
 };
 
-export default function WhyChooseUs() {
+const WhyChooseUs = () => {
   const stats = [
-    { icon: Building2,    value: "150+",  label: "CERTIFIED & SKILLED PROFESSIONALS" },
-    { icon: UserCheck,    value: "90+",   label: "TRUSTED CLIENTS ACROSS INDUSTRIES" },
-    { icon: Award,        value: "90+",   label: "TRUSTED CLIENTS ACROSS INDUSTRIES" },
-    { icon: CheckCircle2, value: "3408+", label: "POSTCODES WITH SAME-DAY SUPPORT CAPABILITY" },
+    { icon: 'building', target: 150, suffix: '+', label: 'Certified & Skilled Professionals' },
+    { icon: 'users',    target: 90,  suffix: '+', label: 'Trusted Clients Across Industries' },
+    { icon: 'award',    target: 15,  suffix: '+', label: 'Years of Industry Experience' },
+    { icon: 'check',    target: 3408,suffix: '+', label: 'Postcodes With Same-Day Support' },
   ];
 
-  const standards = ["20000-1:2018", "27001:2022", "9001:2015", "14001-2015"];
-
   return (
-    <section className="bg-white py-10 sm:py-13 px-4 font-sans border-8 border-blue-50/50 overflow-hidden">
+    <section style={{
+      fontFamily: "'Inter', 'Segoe UI', sans-serif",
+      background: '#ffffff',
+      width: '100%',
+      padding: '0 0 64px 0',
+      boxSizing: 'border-box',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
       <style>{`
-        @keyframes shine {
-          0%   { left: -100%; opacity: 0; }
-          20%  { opacity: 1; }
-          80%  { opacity: 1; }
-          100% { left: 200%; opacity: 0; }
+        .wcu-hero {
+          height: 300px;
         }
-        .shine-effect::after {
-          content: '';
-          position: absolute;
-          top: 0; left: -100%;
-          width: 50%; height: 100%;
-          background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
-          transform: skewX(-25deg);
-          z-index: 10;
+        .wcu-bg-text {
+          font-size: clamp(70px, 17vw, 160px);
         }
-        .shine-effect:hover::after { animation: shine 1.2s ease-in-out; }
-        .bg-grid-pattern {
-          background-image:
-            linear-gradient(to right, rgba(59,130,246,0.05) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(59,130,246,0.05) 1px, transparent 1px);
-          background-size: 40px 40px;
+        .wcu-heading {
+          font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+        .wcu-subtext {
+          font-size: 14px;
+        }
+        .wcu-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 14px;
+          margin-bottom: 36px;
+        }
+        .wcu-icon-circle {
+          width: 58px;
+          height: 58px;
+        }
+        .wcu-value {
+          font-size: 28px;
+        }
+        .wcu-label {
+          font-size: 10px;
+          padding: 0 12px;
+        }
+
+        /* Tablet */
+        @media (max-width: 1024px) {
+          .wcu-hero {
+            height: 260px;
+          }
+          .wcu-hero-content {
+            padding: 0 16px;
+          }
+          .wcu-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+        }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+          .wcu-hero {
+            height: auto;
+            padding: 48px 16px;
+          }
+          .wcu-bg-text {
+            font-size: clamp(48px, 22vw, 90px);
+          }
+          .wcu-subtext {
+            font-size: 13px;
+            padding: 0 8px;
+          }
+          .wcu-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+          }
+          .wcu-icon-circle {
+            width: 46px;
+            height: 46px;
+          }
+          .wcu-icon-circle svg {
+            width: 20px;
+            height: 20px;
+          }
+          .wcu-value {
+            font-size: 22px;
+          }
+          .wcu-label {
+            font-size: 9px;
+            padding: 0 6px;
+          }
+        }
+
+        /* Small mobile */
+        @media (max-width: 380px) {
+          .wcu-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+          }
+          .wcu-value {
+            font-size: 18px;
+          }
+          .wcu-label {
+            font-size: 8px;
+          }
         }
       `}</style>
 
-      <div className="max-w-7xl mx-auto relative">
+      <ParallaxHero />
 
-        {/* Blobs */}
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-blue-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 pointer-events-none -z-10 animate-pulse" />
-        <div className="absolute top-40 right-1/4 w-72 h-72 bg-indigo-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 pointer-events-none -z-10 animate-pulse" style={{ animationDelay: '2s' }} />
-
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-10 relative z-10">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0f294d] mb-3 sm:mb-4">
-            Why Choose Us
-          </h2>
-          <p className="text-sm md:text-base text-gray-500 max-w-5xl mx-auto leading-relaxed px-2">
-            With industry expertise, innovation-driven strategies, nationwide support capabilities, and customized enterprise solutions, CSK helps businesses, government sectors, and educational institutions achieve reliable and sustainable digital transformation.
-          </p>
-        </div>
-
-        {/* Stats Grid — 2 cols on mobile/tablet, 4 on desktop */}
-        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8 mb-10 px-2 sm:px-4 bg-grid-pattern py-6 sm:py-8 rounded-3xl">
-          {stats.map((stat, index) => (
-            <StatCard
-              key={index}
-              icon={stat.icon}
-              value={stat.value}
-              label={stat.label}
-              index={index}
-            />
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 32px' }}>
+        {/* Stats grid */}
+        <div className="wcu-grid">
+          {stats.map((s, i) => (
+            <StatCard key={i} icon={s.icon} target={s.target} suffix={s.suffix} label={s.label} index={i} />
           ))}
         </div>
-
-        {/* ISO Carousel */}
-        <IsoBadgeCarousel standards={standards} />
-
       </div>
     </section>
   );
-}
+};
+
+export default WhyChooseUs;
