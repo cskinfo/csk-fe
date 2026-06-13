@@ -931,14 +931,29 @@ export default function TrustedAlliances() {
             </div>
 
             {/* Title */}
-            <h1 style={{
+            {/* <h1 style={{
               fontFamily: "'Syne', sans-serif", fontWeight: 800,
               fontSize: "clamp(28px,5.5vw,48px)", letterSpacing: "0.2em", lineHeight: 1.2,
               animation: "fade-up 0.7s 0.08s cubic-bezier(0.16,1,0.3,1) both",
               margin: 0,
             }}>
               <span className="title-gradient">Our Trusted Alliances</span>
-            </h1>
+            </h1> */}
+
+            {/* // AB (simple, clean - Partners section jaisa) */}
+<h1 style={{
+  fontFamily: "'Inter', 'Segoe UI', sans-serif",
+  fontWeight: 800,
+  fontSize: "clamp(1.8rem, 5vw, 3rem)",
+  letterSpacing: "-0.3px",
+  lineHeight: 1.2,
+  animation: "fade-up 0.7s 0.08s cubic-bezier(0.16,1,0.3,1) both",
+  margin: 0,
+  color: "#1a1a2e",
+}}>
+  <span className="title-gradient" > Our Trusted Clients</span>
+  
+</h1>
 
             {/* Subtitle */}
             <p style={{

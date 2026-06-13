@@ -13,7 +13,7 @@ import AdminPage from "./Pages/AdminPage";
 import ContactDetailsPage from "./Pages/ContactDetailsPage";
 import ScrollToTop from "./Components/ScrollToTop";
 import AboutPage from "./Components/About/Aboutpage";
-import TawkChat from "./components/TawkChat";
+import TawkChat from "./Components/TawkChat";
 
 
 function App() {
