@@ -189,13 +189,13 @@ export default function TestimonialsSection() {
           font-weight: 700;
           letter-spacing: 0.15em;
           text-transform: uppercase;
-          color: #f0a500;
+          color: #ff7f50;
           margin-bottom: 10px;
         }
         .t-heading {
           font-size: clamp(1.7rem, 6vw, 2.8rem);
-          font-weight: 900;
-          color: #1a2c5b;
+          font-weight: 700;
+          color: #000000 ;
           line-height: 1.15;
           margin-bottom: 18px;
           letter-spacing: -0.02em;
@@ -211,7 +211,7 @@ export default function TestimonialsSection() {
         }
         .t-join-btn {
           display: inline-block;
-          background: #f0a500;
+          background: #ff4f00 ;
           color: #fff;
           font-weight: 800;
           font-size: 0.82rem;
@@ -224,7 +224,7 @@ export default function TestimonialsSection() {
           transition: all 0.2s;
         }
         .t-join-btn:hover {
-          background: #d4920a;
+          background: #ff4500;
           transform: translateY(-2px);
         }
         .t-dots {
@@ -272,13 +272,13 @@ export default function TestimonialsSection() {
           bottom: -14px;
           left: 0; right: 0;
           height: 3px;
-          background: #e2e8f0;
+          background: #ffffff;
           border-radius: 2px;
           overflow: hidden;
         }
         .t-progress-bar {
           height: 100%;
-          background: #f0a500;
+          background: #ff4500;
           border-radius: 2px;
           animation: progressBar 3s linear forwards;
         }
