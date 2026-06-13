@@ -156,3 +156,17 @@
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
   }
 }
+
+
+.csk-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: csk-spin 0.7s linear infinite;
+}
+@keyframes csk-spin {
+  to { transform: rotate(360deg); }
+}

@@ -13,7 +13,7 @@ import AdminPage from "./Pages/AdminPage";
 import ContactDetailsPage from "./Pages/ContactDetailsPage";
 import ScrollToTop from "./Components/ScrollToTop";
 import AboutPage from "./Components/About/Aboutpage";
-import TawkChat from "./Components/TawkChat";
+// import TawkChat from "./Components/TawkChat";
 
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
            kyunki StickyScroll apna bg-white set karta hai
       */}
       <ScrollToTop />
-        <TawkChat />
+        {/* <TawkChat /> */}
       <div className="min-h-screen ">
         <Navbar />
         <Routes>

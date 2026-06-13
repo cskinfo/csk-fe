@@ -582,7 +582,7 @@ function JobsManager({ jobs, setJobs }) {
 // ─────────────────────────────────────────────────────────────
 // PHOTO FORM MODAL
 // ─────────────────────────────────────────────────────────────
-function PhotoFormModal({ initial, onSave, onClose }) {
+function PhotoFormModal({ initial, onSave, onClose, uploading = false }) {
     const { T } = useT();
     const blank = { title: "", category: "COMPANY EVENT", span: "normal", image: "" };
     const [form, setForm] = useState(initial || blank);
@@ -590,21 +590,69 @@ function PhotoFormModal({ initial, onSave, onClose }) {
     const [preview, setPreview] = useState(initial?.image || "");
     const fileRef = useRef();
     const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-    const isValid =
-        form.title.trim() &&
-        (selectedFile || preview);
+
+    const isValid = form.title.trim() && (selectedFile || preview);
 
     const inputStyle = { width: "100%", padding: "9px 12px", background: T.inputBg, border: `1px solid ${T.border}`, borderRadius: 8, color: T.inputText, fontSize: 14, fontFamily: "inherit", outline: "none" };
     const labelStyle = { display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textSecondary, marginBottom: 5 };
 
-    const handleFile = (e) => {
-        const file = e.target.files[0];
+ const handleFile = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-        if (!file) return;
+  const MAX_BYTES = 1 * 1024 * 1024; // 1MB
 
-        setSelectedFile(file);
+  // Already 1MB se kam hai — seedha use karo
+  if (file.size <= MAX_BYTES) {
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+    return; // bas yahi pe rok do
+  }
 
-        setPreview(URL.createObjectURL(file));
+  // 1MB se bada hai tabhi compress karo
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX_DIM = 1600;
+      let { width, height } = img;
+
+      if (width > height && width > MAX_DIM) {
+        height = Math.round((height * MAX_DIM) / width);
+        width = MAX_DIM;
+      } else if (height > MAX_DIM) {
+        width = Math.round((width * MAX_DIM) / height);
+        height = MAX_DIM;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+
+      let quality = 0.85;
+      const compress = () => {
+        canvas.toBlob((blob) => {
+          if (blob.size <= MAX_BYTES || quality <= 0.1) {
+            const compressedFile = new File([blob], file.name, { type: "image/jpeg" });
+            setSelectedFile(compressedFile);
+            setPreview(URL.createObjectURL(compressedFile));
+          } else {
+            quality -= 0.1;
+            compress();
+          }
+        }, "image/jpeg", quality);
+      };
+      compress();
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+    const handleClose = () => {
+        if (uploading) return; // upload ke time modal band na ho
+        onClose();
     };
 
     return (
@@ -612,34 +660,53 @@ function PhotoFormModal({ initial, onSave, onClose }) {
             <div className="csk-form-grid" style={{ background: T.modalBg, border: `1px solid ${T.modalBorder}`, borderRadius: 18, padding: 32, width: 520, maxHeight: "92vh", overflowY: "auto", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: T.textPrimary }}>{initial ? "✏️ Edit Photo" : "📷 Upload Gallery Photo"}</h3>
-                    <button onClick={onClose} style={{ background: T.closeBtnBg, border: "none", color: T.closeBtnTx, width: 32, height: 32, borderRadius: 8, fontSize: 18, cursor: "pointer" }}>×</button>
+                    <button
+                        onClick={handleClose}
+                        disabled={uploading}
+                        style={{
+                            background: T.closeBtnBg, border: "none", color: T.closeBtnTx,
+                            width: 32, height: 32, borderRadius: 8, fontSize: 18,
+                            cursor: uploading ? "not-allowed" : "pointer",
+                            opacity: uploading ? 0.5 : 1,
+                        }}
+                    >×</button>
                 </div>
 
                 <div style={{ marginBottom: 18 }}>
                     <label style={labelStyle}>Photo *</label>
-                    <div onClick={() => fileRef.current.click()} style={{ border: `2px dashed ${T.uploadZoneBdr}`, borderRadius: 12, padding: 24, textAlign: "center", cursor: "pointer", background: T.uploadZoneBg, transition: "border-color 0.2s" }}
-                        onMouseEnter={e => e.currentTarget.style.borderColor = "#4f6ef7"}
-                        onMouseLeave={e => e.currentTarget.style.borderColor = T.uploadZoneBdr}>
+                    <div
+                        onClick={() => !uploading && fileRef.current.click()}
+                        style={{
+                            border: `2px dashed ${T.uploadZoneBdr}`, borderRadius: 12, padding: 24,
+                            textAlign: "center", cursor: uploading ? "not-allowed" : "pointer",
+                            background: T.uploadZoneBg, transition: "border-color 0.2s",
+                            opacity: uploading ? 0.6 : 1,
+                        }}
+                        onMouseEnter={e => !uploading && (e.currentTarget.style.borderColor = "#4f6ef7")}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = T.uploadZoneBdr}
+                    >
                         {preview
                             ? <img src={preview} alt="preview" style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 10, objectFit: "cover" }} />
                             : <div><div style={{ fontSize: 36, marginBottom: 10 }}>📷</div><p style={{ fontSize: 14, color: "#4f6ef7", fontWeight: 700 }}>Click to upload photo</p><p style={{ fontSize: 11, color: T.textMuted, marginTop: 5 }}>JPG, PNG, WEBP — Stored securely in database</p></div>
                         }
                     </div>
-                    <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
+                    <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} disabled={uploading} style={{ display: "none" }} />
                 </div>
 
                 <div style={{ marginBottom: 16 }}>
                     <label style={labelStyle}>Photo Title *</label>
-                    <input style={inputStyle} value={form.title} onChange={e => set("title", e.target.value)} placeholder="e.g. Diwali Celebration 2025" />
+                    <input style={inputStyle} value={form.title} onChange={e => set("title", e.target.value)} placeholder="e.g. Diwali Celebration 2025" disabled={uploading} />
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                     <div>
                         <label style={labelStyle}>Category</label>
-                        <select style={inputStyle} value={form.category} onChange={e => set("category", e.target.value)}>{GALLERY_CATS.map(c => <option key={c} value={c}>{c}</option>)}</select>
+                        <select style={inputStyle} value={form.category} onChange={e => set("category", e.target.value)} disabled={uploading}>
+                            {GALLERY_CATS.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
                     </div>
                     <div>
                         <label style={labelStyle}>Card Size</label>
-                        <select style={inputStyle} value={form.span} onChange={e => set("span", e.target.value)}>
+                        <select style={inputStyle} value={form.span} onChange={e => set("span", e.target.value)} disabled={uploading}>
                             <option value="normal">Normal (1 column)</option>
                             <option value="wide">Wide (2 columns)</option>
                         </select>
@@ -647,27 +714,51 @@ function PhotoFormModal({ initial, onSave, onClose }) {
                 </div>
 
                 <div style={{ display: "flex", gap: 10, marginTop: 24, justifyContent: "flex-end" }}>
-                    <button onClick={onClose} style={{ padding: "9px 20px", background: T.closeBtnBg, color: T.textSecondary, border: "none", borderRadius: 8, cursor: "pointer", fontFamily: "inherit", fontWeight: 700 }}>Cancel</button>
                     <button
-                        onClick={() =>
-                            isValid &&
-                            onSave(form, selectedFile)
-                        }
+                        onClick={handleClose}
+                        disabled={uploading}
+                        style={{
+                            padding: "9px 20px", background: T.closeBtnBg, color: T.textSecondary,
+                            border: "none", borderRadius: 8,
+                            cursor: uploading ? "not-allowed" : "pointer",
+                            opacity: uploading ? 0.5 : 1,
+                            fontFamily: "inherit", fontWeight: 700,
+                        }}
+                    >Cancel</button>
+
+                    <button
+                        onClick={() => isValid && !uploading && onSave(form, selectedFile)}
+                        disabled={!isValid || uploading}
                         style={{
                             padding: "9px 22px",
-                            background: isValid
-                                ? "linear-gradient(135deg,#10b981,#059669)"
-                                : T.border,
-                            color: isValid ? "#fff" : T.textMuted,
+                            background: uploading
+                                ? T.border
+                                : isValid
+                                    ? "linear-gradient(135deg,#10b981,#059669)"
+                                    : T.border,
+                            color: uploading ? T.textSecondary : isValid ? "#fff" : T.textMuted,
                             border: "none",
                             borderRadius: 8,
-                            cursor: isValid ? "pointer" : "not-allowed",
+                            cursor: uploading ? "not-allowed" : isValid ? "pointer" : "not-allowed",
                             fontFamily: "inherit",
-                            fontWeight: 700
+                            fontWeight: 700,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 8,
+                            minWidth: 130,
                         }}
                     >
-                        {initial ? "Save Changes" : "Upload Photo"}
-                    </button>        </div>
+                        {uploading ? (
+                            <>
+                                <span className="csk-spinner" />
+                                Uploading...
+                            </>
+                        ) : (
+                            initial ? "Save Changes" : "Upload Photo"
+                        )}
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -681,11 +772,13 @@ function GalleryManager({ photos, setPhotos }) {
     const [showForm, setShowForm] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [deleteId, setDeleteId] = useState(null);
+    const [uploading, setUploading] = useState(false);
 
     const addPhoto = async (form, file) => {
+        if (uploading) return;
+        setUploading(true); // 👈 FIX: yahan true set karna tha
         try {
             const fd = new FormData();
-
             fd.append("image", file);
             fd.append("title", form.title);
             fd.append("category", form.category);
@@ -694,56 +787,54 @@ function GalleryManager({ photos, setPhotos }) {
             const res = await axios.post(
                 "https://api.cskinfotech.com/api/gallery",
                 fd,
-                {
-                    headers: {
-                        "Content-Type":
-                            "multipart/form-data",
-                    },
-                }
+                { headers: { "Content-Type": "multipart/form-data" } }
             );
 
-            setPhotos((prev) => [
-                res.data,
-                ...prev,
-            ]);
-
+            setPhotos((prev) => [res.data, ...prev]);
             setShowForm(false);
         } catch (err) {
             console.log(err);
+            alert("Upload failed, please try again.");
+        } finally {
+            setUploading(false);
         }
     };
-    const saveEdit = async (form) => {
-        try {
-            const res = await axios.put(
+
+    const saveEdit = async (form, file) => {
+    try {
+        let res;
+        if (file) {
+            // नई photo select हुई → multipart भेजो
+            const fd = new FormData();
+            fd.append("image", file);
+            fd.append("title", form.title);
+            fd.append("category", form.category);
+            fd.append("span", form.span);
+
+            res = await axios.put(
+                `https://api.cskinfotech.com/api/gallery/${editItem.id}`,
+                fd,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+        } else {
+            // sirf text fields update — purani image rakho
+            res = await axios.put(
                 `https://api.cskinfotech.com/api/gallery/${editItem.id}`,
                 form
             );
-
-            setPhotos(
-                photos.map((p) =>
-                    p.id === editItem.id
-                        ? res.data
-                        : p
-                )
-            );
-
-            setEditItem(null);
-        } catch (err) {
-            console.log(err);
         }
-    };
+
+        setPhotos(photos.map((p) => (p.id === editItem.id ? res.data : p)));
+        setEditItem(null);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
     const confirmDelete = async () => {
         try {
-            await axios.delete(
-                `https://api.cskinfotech.com/api/gallery/${deleteId}`
-            );
-
-            setPhotos(
-                photos.filter(
-                    (p) => p.id !== deleteId
-                )
-            );
-
+            await axios.delete(`https://api.cskinfotech.com/api/gallery/${deleteId}`);
+            setPhotos(photos.filter((p) => p.id !== deleteId));
             setDeleteId(null);
         } catch (err) {
             console.log(err);
@@ -791,9 +882,31 @@ function GalleryManager({ photos, setPhotos }) {
             }
 
             <ExportPanel jobs={[]} photos={photos} />
-            {showForm && <PhotoFormModal onSave={addPhoto} onClose={() => setShowForm(false)} />}
-            {editItem && <PhotoFormModal initial={editItem} onSave={saveEdit} onClose={() => setEditItem(null)} />}
-            {deleteId && <ConfirmModal title="Delete Photo?" message="This will permanently remove it from the gallery." onConfirm={confirmDelete} onCancel={() => setDeleteId(null)} />}
+
+            {showForm && (
+                <PhotoFormModal
+                    uploading={uploading}
+                    onSave={addPhoto}
+                    onClose={() => !uploading && setShowForm(false)}
+                />
+            )}
+
+            {editItem && (
+                <PhotoFormModal
+                    initial={editItem}
+                    onSave={saveEdit}
+                    onClose={() => setEditItem(null)}
+                />
+            )}
+
+            {deleteId && (
+                <ConfirmModal
+                    title="Delete Photo?"
+                    message="This will permanently remove it from the gallery."
+                    onConfirm={confirmDelete}
+                    onCancel={() => setDeleteId(null)}
+                />
+            )}
         </div>
     );
 }
